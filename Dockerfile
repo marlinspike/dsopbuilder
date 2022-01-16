@@ -22,7 +22,6 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     software-properties-common \
     wget \
-    curl \
     ca-certificates \
     gnupg \
     git \
@@ -37,11 +36,6 @@ RUN mv terraform /usr/local/bin
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin
-
-#AzureCLI
-#RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
-#RUN apt-get update
-#RUN apt-get install azure-cli -y
 
 #Kustomize
 RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \

@@ -37,6 +37,7 @@ def main(config:str = "", settings:str="", deploy:str="n"):
     if bool(_app.settings["custom_vnet_settings"]["vnet_customize"]) == False:
         #No VNet Customization
         if os.path.isdir(f"{str(pathlib.Path().resolve())}/{_working_dir}") == False: _stream.Do_No_VNet_Customization()
+        _stream.do_rename_terraform_file()
         with console.status("Applying Terraform settings...", spinner="earth"):
             logger.debug("Applying config settings")
             splice_file_token(_terraform_file,"cluster_name", _app.settings["general"]["cluster_name"])

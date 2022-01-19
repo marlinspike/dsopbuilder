@@ -21,8 +21,8 @@ class Stream:
     def Do_No_VNet_Customization(self ):
         dir = f"{pathlib.Path().resolve()}/{self.working_dir}/{self.repo_name}"
         self._clone_env_repo(False)
-        res = self._run_process(['cp', f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"])
-
+        if os.path.isfile(f"{str(pathlib.Path().resolve())}/{self.working_dir}/{self.repo_name}/example/terraform.tfvars") == False:
+            res = self._run_process(['cp', f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"])
 
     def do_vnet_customization():
         pass

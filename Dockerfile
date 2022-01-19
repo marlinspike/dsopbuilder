@@ -13,6 +13,7 @@ ENV KUBECTL_VER="v1.23.1"
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
 
 RUN apt-get update && apt-get install -y \
+    python3.10 \
     zip \
     jq \
     gpg \
@@ -27,12 +28,12 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     git \
     azure-cli \
-    python3.10 \
     curl \
     python3-pip \
     nano \
     gettext-base \
-    sudo
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
 
 #Terraform
 RUN wget https://releases.hashicorp.com/terraform/1.0.1/terraform_1.0.1_linux_amd64.zip

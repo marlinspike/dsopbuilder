@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 
 _default_dsop_rke2_repo = "https://github.com/cheruvu1/dsop-rke2"
 
-
 class Stream:
     def __init__(self, repo_name:str="dsop_rke2", working_dir:str="working"):
         self.repo_name = repo_name
@@ -21,8 +20,10 @@ class Stream:
     def Do_No_VNet_Customization(self ):
         dir = f"{pathlib.Path().resolve()}/{self.working_dir}/{self.repo_name}"
         self._clone_env_repo(False)
+
+    def do_rename_terraform_file(self):
         if os.path.isfile(f"{str(pathlib.Path().resolve())}/{self.working_dir}/{self.repo_name}/example/terraform.tfvars") == False:
-            res = self._run_process(['cp', f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"])
+            res = self._run_process(['cp', f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"])        
 
     def do_vnet_customization():
         pass

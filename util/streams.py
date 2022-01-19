@@ -4,7 +4,7 @@ import subprocess
 import pathlib
 import logging
 log_format = '%(asctime)s %(filename)s: %(message)s'
-logging.basicConfig(filename='app.log', encoding='utf-8', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
 _default_dsop_rke2_repo = "https://github.com/cheruvu1/dsop-rke2"

@@ -1,0 +1,61 @@
+from util import streams
+from appsettings import AppSettings
+import click
+import pathlib
+from util.io import *
+import os
+from rich.console import Console
+import time
+import sys
+import logging
+log_format = '%(asctime)s %(filename)s: %(message)s'
+logging.basicConfig(filename='app.log', encoding='utf-8', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger(__name__)
+console = Console()
+
+
+
+_app = None
+_working_dir = "working"
+_clone_dsop_rke2_dir = "dsop_rke2"
+_stream = streams.Stream(_clone_dsop_rke2_dir, _working_dir)
+_terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/example/terraform.tfvars"
+
+@click.command()
+@click.option('--config', default="", help="Path and Filename of Custom Cofig File Location. If not provided, './config/config.json' is assumed")
+@click.option('--settings', default="n", help="Print app config settings (these configure Azure Cloud Login and Terraform)")
+def main(config:str = "", settings=""):
+    if config.strip() == "" : _app = AppSettings()
+    if settings.strip() != "n":
+        _app.print_settings_json()
+        sys.exit()
+
+    if bool(_app.settings["custom_vnet_settings"]["vnet_customize"]) == False:
+        #No VNet Customization
+        if os.path.isdir(f"{str(pathlib.Path().resolve())}/{_working_dir}") == False: _stream.Do_No_VNet_Customization()
+        with console.status("Applying Terraform settings...", spinner="earth"):
+            logger.debug("Applying config settings")
+            splice_file_token(_terraform_file,"cluster_name", _app.settings["general"]["cluster_name"])
+            splice_file_token(_terraform_file, "cloud", _app.settings["general"]["cloud"])
+            splice_file_token(_terraform_file, "location", _app.settings["general"]["location"])
+            splice_file_token(_terraform_file, "server_public_ip", _app.settings["connectivity"]["server_public_ip"])
+            splice_file_token(_terraform_file, "server_open_ssh_public", _app.settings["connectivity"]["server_open_ssh_public"])
+        with console.status("Initializing Azure-CLI login...", spinner="earth"):
+            logger.debug("Initializing Azure Cloud")
+            _stream.do_cloud_login()
+        with console.status("Initializing Terraform...", spinner="earth"):
+            logger.debug("Initializing Terraform")
+            _stream._run_terraform_init()
+        with console.status("Running Terraform... This may take a while.", spinner="earth"):
+            logger.debug("Running Terraform")
+            _stream._run_terraform()
+        pass
+    else:
+        #VNet Customization
+        pass
+
+
+main()
+
+if __name__ == '__main__':
+    main()

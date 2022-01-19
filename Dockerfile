@@ -33,7 +33,6 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     nano \
     gettext-base \
-    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 #Terraform
@@ -56,6 +55,7 @@ ADD https://github.com/mozilla/sops/releases/download/v${SOPS_VER}/sops-v${SOPS_
 #PyBuilder
 COPY . /app
 WORKDIR /app
+RUN ls -l
 RUN pip install -r requirements.txt
 RUN git clone https://github.com/cheruvu1/dsop-rke2 working/dsop-rke2
 RUN git clone https://github.com/cheruvu1/dsop-environment working/bigbang

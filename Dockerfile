@@ -1,4 +1,5 @@
 FROM ubuntu:latest
+ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=America/New_York \
     DEBIAN_FRONTEND=noninteractive
 

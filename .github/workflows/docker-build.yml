@@ -32,3 +32,16 @@ jobs:
           context: .
           push: true
           tags: shuffereu/dsopbuilder:latest
+
+  security:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+  #Container Scan
+      - 
+        name: Container Scan
+        uses: azure/container-scan@v0
+        with:
+          image-name: shuffereu/dsopbuilder:latest # ${{ env.loginServerUrl }}/ would be empty if it's hosted on dockerhub; ${{ github.sha }} could also be replaced with any desired image tag
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}

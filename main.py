@@ -26,7 +26,7 @@ _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_
 @click.command()
 @click.option('--config', default="", help="Path and Filename of Custom Cofig File Location. If not provided, './config/config.json' is assumed")
 @click.option('--settings', default="n", help="Print app config settings (these configure Azure Cloud Login and Terraform)")
-@click.option('--deploy', default="y", help="Only run local splicing of Terraform values. If 'y', the Terrform deployment is also performed (default)")
+@click.option('--deploy', default="n", help="Only run local splicing of Terraform values. If 'y', the Terrform deployment is also performed (default)")
 def main(config:str = "", settings:str="", deploy:str="n"):
     print(Panel.fit("PyBuilder - The Pythonic Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
     if config.strip() == "" : _app = AppSettings()

@@ -28,7 +28,7 @@ _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_
 @click.option('--settings', default="n", help="Print app config settings (these configure Azure Cloud Login and Terraform)")
 @click.option('--deploy', default="n", help="Only run local splicing of Terraform values. If 'y', the Terrform deployment is also performed (default)")
 def main(config:str = "", settings:str="", deploy:str="n"):
-    print(Panel.fit("PyBuilder - The Pythonic Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
+    print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
     if config.strip() == "" : _app = AppSettings()
     if settings.strip() != "n":
         _app.print_settings_json()
@@ -62,7 +62,6 @@ def main(config:str = "", settings:str="", deploy:str="n"):
         pass
 
 
-main()
 
 if __name__ == '__main__':
     main()

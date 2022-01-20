@@ -1,4 +1,4 @@
-** DSOPBuilder and PyBuilder **
+**DSOPBuilder and PyBuilder**
 DevSecOps Builder (DSOPBuilder) is the complete toolset to create a Platform One Big Bang DevSecOps stack on Azure, running on Rancher RKE2. The toolset consists of the following:
 - DSOPBuilder Docker Image: The docker image contains all the required tools and the cloned Git Repos to deploy the Azure Infrastructure using Terraform.
 - PyBuilder: The *PyBuilder* Python app provides an easy way to deploy the entire stack and automates many manual steps. PyBuilder allows you to configure the Terraform _tfvars_ file via the config file provided.
@@ -18,3 +18,4 @@ To run the image you pulled earlier:
 PyBuilder is a Python3 app (Python3 and everything else you'll need is already installed in the Docker iamge). Basic usage of PyBuilder:
 
 - Executing the app: `python3 main.app --help`
+- Displaying the variables you can configure: `python3 main.app --settings=y`

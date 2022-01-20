@@ -23,6 +23,7 @@ class Stream:
 
     def do_rename_terraform_file(self):
         dir = f"{pathlib.Path().resolve()}/{self.working_dir}/{self.repo_name}"
+        logger.debug(f"Renaming TF_File: '{dir}/example/terraform.tfvars.sample' To '{dir}/example/terraform.tfvars'")
         if os.path.isfile(f"{str(pathlib.Path().resolve())}/{self.working_dir}/{self.repo_name}/example/terraform.tfvars") == False:
             res = self._run_process(['cp', f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"])        
 

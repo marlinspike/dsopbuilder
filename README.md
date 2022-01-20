@@ -3,7 +3,7 @@ DevSecOps Builder (DSOPBuilder) is the complete toolset to create a Platform One
 - DSOPBuilder Docker Image: The docker image contains all the required tools and the cloned Git Repos to deploy the Azure Infrastructure using Terraform.
 - PyBuilder: The *PyBuilder* Python app provides an easy way to deploy the entire stack and automates many manual steps. PyBuilder allows you to configure the Terraform _tfvars_ file via the config file provided.
 
-### Running DSOP Builder###
+### Running DSOP Builder ###
 The [DSOPBuilder Docker image](https://hub.docker.com/r/shuffereu/dsopbuilder) is automatically built and pushed to my DockerHub container repository. The DSOPBuilder image contains the PyBuilder app you'll use to deploy P1 DevSecOps to Azure.
 
 ## Pulling and Running the Image from DockerHub ##

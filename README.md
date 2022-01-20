@@ -13,6 +13,7 @@ First make sure you have [Docker Desktop](https://docs.docker.com/get-docker/) i
 ### Running the image ###
 To run the image you pulled earlier:
 `docker run -it shuffereu/dsopbuilder`
+The _-it_ parameter tells Docker that you want to shell into the running container.
 
 ## Running PyBuilder ##
 PyBuilder is a Python3 app (Python3 and everything else you'll need is already installed in the Docker iamge). Basic usage of PyBuilder:

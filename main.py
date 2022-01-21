@@ -27,11 +27,15 @@ _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_
 @click.option('--config', default="", help="Path and Filename of Custom Cofig File Location. If not provided, './config/config.json' is assumed")
 @click.option('--settings', default="n", help="Print app config settings (these configure Azure Cloud Login and Terraform)")
 @click.option('--deploy', default="n", help="Only run local splicing of Terraform values. If 'y', the Terrform deployment is also performed (default)")
-def main(config:str = "", settings:str="", deploy:str="n"):
+@click.option('--destroy', default="n", help="Destroy the resources created by Terraform. If 'y', Destroy. USE WITH CARE!")
+def main(config:str = "", settings:str="", deploy:str="n", destroy:str="n"):
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
     if config.strip() == "" : _app = AppSettings()
     if settings.strip() != "n":
         _app.print_settings_json()
+        sys.exit()
+    if destroy.strip() == "y":
+        _stream.do_terraform_destroy()
         sys.exit()
 
     if bool(_app.settings["custom_vnet_settings"]["vnet_customize"]) == False:

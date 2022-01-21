@@ -53,8 +53,8 @@ RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KU
 ADD https://github.com/mozilla/sops/releases/download/v${SOPS_VER}/sops-v${SOPS_VER}.linux /usr/local/bin/sops
 
 #PyBuilder
-COPY . /app
-WORKDIR /app
+COPY . /PyBuilder
+WORKDIR /PyBuilder
 RUN ls -l
 RUN pip install -r requirements.txt
 RUN git clone https://github.com/cheruvu1/dsop-rke2 working/dsop_rke2

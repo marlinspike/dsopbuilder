@@ -20,7 +20,7 @@ console = Console()
 _app = None
 _working_dir = "working"
 _clone_dsop_rke2_dir = "dsop_rke2"
-_stream = streams.Stream(_clone_dsop_rke2_dir, _working_dir)
+_stream = streams.Stream(_clone_dsop_rke2_dir, _working_dir, pathlib.Path().resolve())
 _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/example/terraform.tfvars"
 
 @click.command()

@@ -57,5 +57,5 @@ COPY . /PyBuilder
 WORKDIR /PyBuilder
 RUN ls -l
 RUN pip install -r requirements.txt
-RUN git clone https://github.com/cheruvu1/dsop-rke2 working/dsop_rke2
-RUN git clone https://github.com/cheruvu1/dsop-environment working/bigbang
+RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
+RUN git clone git@github.com:p1-dsop/dsop-environment.git working/bigbang

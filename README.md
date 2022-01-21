@@ -46,6 +46,7 @@ The PyBuilder configuration file, found at *config/config.json* must be configur
 ```
 
 Here's what the parameters mean:
+
 **General**
 - cluster_name: The name of the RKE2 Kubernetes Cluster
 - cloud: "AzureUSGovernmentCloud" here means Azure Government

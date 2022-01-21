@@ -65,6 +65,6 @@ Here's what the parameters mean:
 PyBuilder is a Python3 app (Python3 and everything else you'll need is already installed in the Docker iamge). Basic usage of PyBuilder:
 
 - Executing the app: `python3 main.app --help`
-- Displaying the variables you can configure: python3 main.app
+- Displaying the variables you can configure: `python3 main.py --settings=y`
 - Editing the values you need to modify for Terraform: Update the _config.json_ file in the _config_ folder with the values you'd like Terraform to use to deploy the solution. See the Section below that discusses each variable.
 - Deploying the RKE2 Big Bang on Azure platform: `python3 main.app deploy=y`

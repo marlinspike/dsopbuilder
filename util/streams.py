@@ -8,7 +8,7 @@ log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
-_default_dsop_rke2_repo = "https://github.com/cheruvu1/dsop-rke2"
+_default_dsop_rke2_repo = "https://github.com/p1-dsop/dsop-rke2"
 
 class Stream:
     def __init__(self, repo_name:str="dsop_rke2", working_dir:str="working", base_dir:str=""):
@@ -19,12 +19,15 @@ class Stream:
     def cout(self, text: str):
         rprint(text)
 
+    def get_work_dir(self) -> str:
+        return f"{self.base_dir}/{self.working_dir}/{self.repo_name}"
+
     def Do_No_VNet_Customization(self ):
-        dir = f"{self.base_dir}/{self.working_dir}/{self.repo_name}"
+        dir = self.get_work_dir()
         self._clone_env_repo(False)
 
     def do_rename_terraform_file(self):
-        dir = f"{self.base_dir}/{self.working_dir}/{self.repo_name}"
+        dir = self.get_work_dir()
         logger.debug(f"Renaming TF_File: '{dir}/example/terraform.tfvars.sample' To '{dir}/example/terraform.tfvars'")
         if os.path.isfile(f"\"{dir}/example/terraform.tfvars\"") == False:
             logger.debug(f"Copying File: {dir}/example/terraform.tfvars.sample -> {dir}/example/terraform.tfvars")
@@ -65,11 +68,10 @@ class Stream:
 
 
     def _run_terraform_init(self):
-        res = self._run_process(['terraform', f"-chdir={self.working_dir}/{self.repo_name}/example" ,'init'])
+        res = self._run_process(['terraform', f"-chdir={self.get_work_dir()}/example" ,'init'])
 
     def _run_terraform(self):
-        work_dir = f"{self.base_dir}/{self.working_dir}/{self.repo_name}/example"
-        args = ['terraform', f"-chdir={work_dir}", 'apply', '-auto-approve']
+        args = ['terraform', f"-chdir={self.get_work_dir()}/example", 'apply', '-auto-approve']
         res = self._run_process(args)
         
 

@@ -1,7 +1,9 @@
+from sqlite3 import Time
 from util import streams
 from appsettings import AppSettings
 import click
 import pathlib
+import util
 from util.io import *
 import os
 from rich.console import Console
@@ -30,6 +32,7 @@ _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_
 @click.option('--destroy', default="n", help="Destroy the resources created by Terraform. If 'y', Destroy. USE WITH CARE!")
 def main(config:str = "", settings:str="", deploy:str="n", destroy:str="n"):
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
+    Timed()
     if config.strip() == "" : _app = AppSettings()
     if settings.strip() != "n":
         _app.print_settings_json()
@@ -55,15 +58,19 @@ def main(config:str = "", settings:str="", deploy:str="n", destroy:str="n"):
             with console.status("Initializing Azure-CLI login...", spinner="earth"):
                 logger.debug("Initializing Azure Cloud")
                 _stream.do_cloud_login()
+                _stream._cout_success("Azure Login Completed.")
             with console.status("Initializing Terraform...", spinner="earth"):
                 logger.debug("Initializing Terraform")
                 _stream._run_terraform_init()
+                _stream._cout_success("Terraform Init Completed!")
             with console.status("Running Terraform... This may take a while.", spinner="earth"):
                 logger.debug("Running Terraform")
                 _stream._run_terraform()
+                _stream._cout_success("Deployment Completed!")
     else:
         #VNet Customization
         pass
+    Timed()
 
 
 

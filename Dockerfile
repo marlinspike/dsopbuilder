@@ -63,8 +63,6 @@ RUN set -ex \
 RUN sudo pip3 uninstall azure-keyvault && \
     sudo pip3 install azure-keyvault==1.1.0
 
-RUN apt-get uninstall sudo
-
 #PyBuilder
 COPY . /PyBuilder
 WORKDIR /PyBuilder

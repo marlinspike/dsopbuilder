@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     nano \
     gettext-base \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 #Terraform
@@ -59,9 +60,11 @@ RUN set -ex \
     && mv ./azcopy /usr/local/bin
 
 #Fixing KeyVault bug in AZ CLI (issue/13507)
-RUN pip3 uninstall azure-keyvault && \
-    pip3 install azure-keyvault==1.1.0
-    
+RUN sudo pip3 uninstall azure-keyvault && \
+    sudo pip3 install azure-keyvault==1.1.0
+
+RUN apt-get uninstall sudo
+
 #PyBuilder
 COPY . /PyBuilder
 WORKDIR /PyBuilder

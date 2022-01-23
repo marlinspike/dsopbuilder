@@ -35,6 +35,10 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
+#Fixing KeyVault bug in AZ CLI (issue/13507)
+RUN pip3 uninstall azure-keyvault && \
+    pip3 install azure-keyvault==1.1.0
+
 #Terraform
 RUN wget https://releases.hashicorp.com/terraform/1.1.4/terraform_1.1.4_linux_amd64.zip
 RUN unzip terraform*.zip
@@ -52,6 +56,12 @@ RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KU
 #SOPS
 ADD https://github.com/mozilla/sops/releases/download/v${SOPS_VER}/sops-v${SOPS_VER}.linux /usr/local/bin/sops
 
+#AZCopy
+RUN set -ex \
+    && curl -L -o azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux \
+    && tar -xf azcopy.tar.gz --strip-components=1 \
+    && mv ./azcopy /usr/local/bin
+    
 #PyBuilder
 COPY . /PyBuilder
 WORKDIR /PyBuilder

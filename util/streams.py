@@ -1,6 +1,7 @@
 from rich import print as rprint
 import os
 import subprocess
+from subprocess import PIPE
 import pathlib
 import logging
 log_format = '%(asctime)s %(filename)s: %(message)s'
@@ -59,23 +60,26 @@ class Stream:
         res = self._run_process(args)
 
     def run_console(self, ):
-        res = self._run_process(['echo', 'Hello', 'World!'])
+        res = self._run_process(['ls', '-l', '-a'],True)
+        res = self._run_process(['echo', 'Hello', 'World!'],True)
+
 
     def _run_terraform_init(self):
         res = self._run_process(['terraform', f"-chdir={self.working_dir}/{self.repo_name}/example" ,'init'])
 
     def _run_terraform(self):
-        res = self._run_process(['terraform', f"-chdir={self.working_dir}/{self.repo_name}/example" ,'apply', '-auto-approve'])
+        work_dir = f"{self.base_dir}/{self.working_dir}/{self.repo_name}/example"
+        args = ['terraform', f"-chdir={work_dir}", 'apply', '-auto-approve']
+        res = self._run_process(args)
+        
 
-
-    def _run_process(self, args):
+    def _run_process(self, args:list, read_output:bool=False, cwd:str=""):
         logger.debug(f"Running process: {locals()}")
-        process = subprocess.Popen(args)
-
-        stdout, stderr = process.communicate()
-        status = process.wait()
-        if stderr != None : self.cout(f"StdErr: {stderr}") 
-        return stdout, stderr
+        if cwd.strip() == "":
+            result = subprocess.run(args, capture_output=False, text=True)
+        else:
+            result = subprocess.run(args, capture_output=True, text=True, cwd=cwd )
+            return result.stdout
 
 if __name__ == '__main__':
     _stream = Stream()

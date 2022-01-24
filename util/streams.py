@@ -1,3 +1,4 @@
+from turtle import st
 from rich import print as rprint
 import os
 import subprocess
@@ -78,13 +79,15 @@ class Stream:
         #print(f"Running script:\n---\n {script}\n---\n")
         #res = self._run_process(script,False, f"{self.get_work_dir()}/example", shell=True)
         res = self._run_process(['source','./run_after_deploy.sh'], True, f"{self.get_work_dir()}/example", shell=True)
+        print(f"Executing run_after_deploy: {res}\n")
         self.cout_success(res)
         
 
-    def _run_process(self, args:list, read_output:bool=False, cwd:str="", shell:bool=False):
+    def _run_process(self, args:list, read_output:bool=False, cwd:str="", shell:bool=False) -> str:
         logger.debug(f"Running process: {locals()}")
         if cwd.strip() == "":
             result = subprocess.run(args, capture_output=False, text=True)
+            return None
         else:
             result = subprocess.run(args, capture_output=True, text=True, cwd=cwd, shell=shell)
             return result.stdout

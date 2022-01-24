@@ -73,16 +73,16 @@ class Stream:
     def _run_terraform(self):
         args = ['terraform', f"-chdir={self.get_work_dir()}/example", 'apply', '-auto-approve']
         res = self._run_process(args)
-        res = self._run_process(['source','./run_after_deploy.sh'], True, f"{self.get_work_dir()}/example")
+        res = self._run_process(['./run_after_deploy.sh'], True, f"{self.get_work_dir()}/example", shell=True)
         self._cout_success(res)
         
 
-    def _run_process(self, args:list, read_output:bool=False, cwd:str=""):
+    def _run_process(self, args:list, read_output:bool=False, cwd:str="", shell:bool=False):
         logger.debug(f"Running process: {locals()}")
         if cwd.strip() == "":
             result = subprocess.run(args, capture_output=False, text=True)
         else:
-            result = subprocess.run(args, capture_output=True, text=True, cwd=cwd )
+            result = subprocess.run(args, capture_output=True, text=True, cwd=cwd, shell=shell)
             return result.stdout
 
 if __name__ == '__main__':

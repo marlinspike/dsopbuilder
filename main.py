@@ -63,7 +63,7 @@ def main(config:str = "", settings:str="", deploy:str="n", destroy:str="n"):
                 logger.debug("Initializing Terraform")
                 _stream._run_terraform_init()
                 _stream._cout_success("Terraform Init Completed!")
-            with console.status("Running Terraform... This may take a while.", spinner="earth"):
+            with console.status("Running Terraform... This may take a while: ", spinner="earth"):
                 logger.debug("Running Terraform")
                 _stream._run_terraform()
                 _stream._cout_success("Deployment Completed!")

@@ -77,7 +77,7 @@ class Stream:
         #    script = f.read()
         #print(f"Running script:\n---\n {script}\n---\n")
         #res = self._run_process(script,False, f"{self.get_work_dir()}/example", shell=True)
-        res = self._run_process(['./run_after_deploy.sh'], True, f"{self.get_work_dir()}/example", shell=True)
+        res = self._run_process(['source','./run_after_deploy.sh'], True, f"{self.get_work_dir()}/example", shell=True)
         self.cout_success(res)
         
 

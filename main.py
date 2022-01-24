@@ -42,8 +42,7 @@ def main(config:str = "", settings:str="", deploy:str="n", destroy:str="n"):
         sys.exit()
 
     if bool(_app.settings["custom_vnet_settings"]["vnet_customize"]) == False:
-        #No VNet Customization
-        if os.path.isdir(f"{str(pathlib.Path().resolve())}/{_working_dir}") == False: _stream.Do_No_VNet_Customization()
+        if os.path.isdir(f"{str(pathlib.Path().resolve())}/{_working_dir}") == False: _stream.Do_No_VNet_Customization()#No VNet Customization
         _stream.do_rename_terraform_file()
         with console.status("Applying Terraform settings...", spinner="earth"):
             logger.debug("Applying config settings")
@@ -52,21 +51,21 @@ def main(config:str = "", settings:str="", deploy:str="n", destroy:str="n"):
             splice_file_token(_terraform_file, "location", _app.settings["general"]["location"])
             splice_file_token(_terraform_file, "server_public_ip", _app.settings["connectivity"]["server_public_ip"])
             splice_file_token(_terraform_file, "server_open_ssh_public", _app.settings["connectivity"]["server_open_ssh_public"])
-            _stream._cout_success("Completed Terraform Token splicing!")
+            _stream.cout_success("Completed Terraform Token splicing!")
 
         if deploy.strip() == "y":
             with console.status("Initializing Azure-CLI login...", spinner="earth"):
                 logger.debug("Initializing Azure Cloud")
                 _stream.do_cloud_login()
-                _stream._cout_success("Azure Login Completed.")
+                _stream.cout_success("Azure Login Completed.")
             with console.status("Initializing Terraform...", spinner="earth"):
                 logger.debug("Initializing Terraform")
                 _stream._run_terraform_init()
-                _stream._cout_success("Terraform Init Completed!")
+                _stream.cout_success("Terraform Init Completed!")
             with console.status("Running Terraform... This may take a while: ", spinner="earth"):
                 logger.debug("Running Terraform")
                 _stream._run_terraform()
-                _stream._cout_success("Deployment Completed!")
+                _stream.cout_success("Deployment Completed!")
     else:
         #VNet Customization
         pass

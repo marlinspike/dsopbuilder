@@ -43,5 +43,5 @@ def Timed():
         start = timer()
     else:
         end = timer()
-        print(f"\nCompleted in {round(Decimal(end - start),5) } milliseconds.")
+        print(f"\nCompleted in {round(Decimal(end - start),5) } seconds.")
         start = 0.0

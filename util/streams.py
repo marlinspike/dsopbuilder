@@ -51,10 +51,10 @@ class Stream:
         self._run_terraform()
 
 
-    def _cout_error(self, text: str):
+    def cout_error(self, text: str):
         rprint(f"[italic red]{text}[/italic red]")
 
-    def _cout_success(self, text: str):
+    def cout_success(self, text: str):
         rprint(f"[green]{text}[/green]")
 
 
@@ -73,8 +73,12 @@ class Stream:
     def _run_terraform(self):
         args = ['terraform', f"-chdir={self.get_work_dir()}/example", 'apply', '-auto-approve']
         res = self._run_process(args)
-        res = self._run_process(['./run_after_deploy.sh'], True, f"{self.get_work_dir()}/example", shell=True)
-        self._cout_success(res)
+        #with open(f"{self.get_work_dir()}/example/run_after_deploy.sh", 'r') as f:
+        #    script = f.read()
+        #print(f"Running script:\n---\n {script}\n---\n")
+        #res = self._run_process(script,False, f"{self.get_work_dir()}/example", shell=True)
+        res = self._run_process(['run_after_deploy.sh'], True, f"{self.get_work_dir()}/example", shell=True)
+        self.cout_success(res)
         
 
     def _run_process(self, args:list, read_output:bool=False, cwd:str="", shell:bool=False):

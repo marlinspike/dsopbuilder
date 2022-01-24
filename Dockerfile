@@ -63,6 +63,8 @@ RUN set -ex \
 RUN sudo pip3 uninstall azure-keyvault && \
     sudo pip3 install azure-keyvault==1.1.0
 
+RUN chmod +x /PyBuilder/working/dsop_rke2/example/run_after_install.sh
+
 #PyBuilder
 COPY . /PyBuilder
 WORKDIR /PyBuilder

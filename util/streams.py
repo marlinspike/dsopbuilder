@@ -1,4 +1,3 @@
-from turtle import st
 from rich import print as rprint
 import os
 import subprocess

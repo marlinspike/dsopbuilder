@@ -73,6 +73,8 @@ class Stream:
     def _run_terraform(self):
         args = ['terraform', f"-chdir={self.get_work_dir()}/example", 'apply', '-auto-approve']
         res = self._run_process(args)
+        res = self._run_process(['./run_after_deploy.sh'], True, f"self.get_work_dir()/example")
+        self._cout_success(res)
         
 
     def _run_process(self, args:list, read_output:bool=False, cwd:str=""):

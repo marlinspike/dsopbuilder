@@ -1,6 +1,6 @@
 {
     "general": {
-        "cluster_name": "dsop_rke2",
+        "cluster_name": "dsop-rke2",
         "cloud": "AzureUSGovernmentCloud",
         "location": "usgovvirginia"
     },

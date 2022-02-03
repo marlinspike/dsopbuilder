@@ -73,13 +73,17 @@ class Stream:
     def _run_terraform(self):
         args = ['terraform', f"-chdir={self.get_work_dir()}/example", 'apply', '-auto-approve']
         res = self._run_process(args)
-        #with open(f"{self.get_work_dir()}/example/run_after_deploy.sh", 'r') as f:
-        #    script = f.read()
-        #print(f"Running script:\n---\n {script}\n---\n")
-        #res = self._run_process(script,False, f"{self.get_work_dir()}/example", shell=True)
-        res = self._run_process(['source','./run_after_deploy.sh'], True, f"{self.get_work_dir()}/example", shell=True)
-        print(f"Executing run_after_deploy: {res}\n")
+        self._copy_scripts()
+        res = self._run_process('fetch-kubeconfig.sh', True, f"{self.get_work_dir()}/example", shell=False)
+        logger.debug(f"fetch-kubeconfig.sh: {res}\n")
+        res = self._run_process('fetch-ssh-key.sh', True, f"{self.get_work_dir()}/example", shell=False)
+        logger.debug(f"fetch-ssh-key.sh: {res}\n")
         self.cout_success(res)
+    
+    def _copy_scripts(self):
+        res = self._run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/*', '/PyBuilder/working/dsop_rke2/example'])
+        logger.debug(f"Copying script files to example directory")
+    
         
 
     def _run_process(self, args:list, read_output:bool=False, cwd:str="", shell:bool=False) -> str:

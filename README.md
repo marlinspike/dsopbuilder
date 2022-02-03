@@ -68,7 +68,6 @@ PyBuilder is a Python3 app (Python3 and everything else you'll need is already i
 ``` 
     cd working/dsop_rke2/example
     source run_after_deploy.sh 
-    cd ../../../
 ```
 - Executing the app: `python3 main.app --help`
 - Displaying the variables you can configure: `python3 main.py --settings=y`

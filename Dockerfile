@@ -69,7 +69,6 @@ WORKDIR /PyBuilder
 RUN ls -l
 RUN pip install -r requirements.txt
 RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
-COPY working/dsop_rke2/scripts/* working/dsop_rke2/example
 #RUN git clone git@github.com:p1-dsop/dsop-environment.git working/bigbang
 
 

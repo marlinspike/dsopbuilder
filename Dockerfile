@@ -73,3 +73,4 @@ RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
 
 
 RUN chmod +x working/dsop_rke2/example/run_after_deploy.sh
+RUN chmod +x working/dsop_rke2/scripts/*.sh

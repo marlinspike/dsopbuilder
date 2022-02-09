@@ -72,6 +72,6 @@ RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
 
 
 RUN chmod +x working/dsop_rke2/example/run_after_deploy.sh \
-    RUN chmod +x working/dsop_rke2/example/fetch-kubeconfig.sh \
-    RUN chmod +x working/dsop_rke2/example/fetch-ssh-key.sh \
-    RUN chmod +x working/dsop_rke2/example/check-terraform.sh 
+    chmod +x working/dsop_rke2/example/fetch-kubeconfig.sh \
+    chmod +x working/dsop_rke2/example/fetch-ssh-key.sh \
+    chmod +x working/dsop_rke2/example/check-terraform.sh 

@@ -74,7 +74,7 @@ class Stream:
         args = ['terraform', f"-chdir={self.get_work_dir()}/example", 'apply', '-auto-approve']
         res = self._run_process(args)
         self._copy_scripts()
-        res = self._run_process('./fetch-kubeconfig.sh', True, cwd=f"{self.get_work_dir()}/example", shell=False)
+        res = self._run_process('source', './fetch-kubeconfig.sh', True, cwd=f"{self.get_work_dir()}/example", shell=False)
         logger.debug(f"fetch-kubeconfig.sh: {res}\n")
         res = self._run_process('./fetch-ssh-key.sh', True, cwd=f"{self.get_work_dir()}/example", shell=False)
         logger.debug(f"fetch-ssh-key.sh: {res}\n")

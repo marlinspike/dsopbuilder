@@ -70,8 +70,8 @@ RUN pip install -r requirements.txt
 RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
 #RUN git clone git@github.com:p1-dsop/dsop-environment.git working/bigbang
 
-RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh \
-    chmod +x working/dsop_rke2/scripts/fetch-kubeconfig.sh \
-    chmod +x working/dsop_rke2/scripts/fetch-ssh-key.sh \
-    chmod +x working/dsop_rke2/scripts/check-terraform.sh \
-    chmod +x working/dsop_rke2/example/run_after_deploy.sh
+RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh
+RUN chmod +x working/dsop_rke2/scripts/fetch-kubeconfig.sh
+RUN chmod +x working/dsop_rke2/scripts/fetch-ssh-key.sh
+RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh
+RUN chmod +x working/dsop_rke2/example/run_after_deploy.sh

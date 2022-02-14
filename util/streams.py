@@ -78,7 +78,7 @@ class Stream:
         #logger.debug(f"fetch-kubeconfig.sh: {res}\n")
         res = self._run_process(['./fetch-ssh-key.sh'], True, cwd=f"{self.get_work_dir()}/example", shell=False)
         logger.debug(f"fetch-ssh-key.sh: {res}\n")
-        res = self._run_process(['./run_after_deploy.sh'], True, cwd=f"{self.get_work_dir()}/example" ,shell=False)
+        res = self._run_process(['./run_after_deploy.sh'], True, cwd=f"{self.get_work_dir()}/example" ,shell=True)
         logger.debug(f"run_after_deploy.sh: {res}\n")
         self.cout_success(res)
     

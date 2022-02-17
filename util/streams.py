@@ -11,21 +11,37 @@ logger = logging.getLogger(__name__)
 _default_dsop_rke2_repo = "https://github.com/p1-dsop/dsop-rke2"
 
 class Stream:
-    def __init__(self, repo_name:str="dsop_rke2", working_dir:str="working", base_dir:str=""):
+    def __init__(self, repo_name:str="dsop_rke2", working_dir:str="working", base_dir:str="", project_dir:str=""):
         self.repo_name = repo_name
         self.working_dir = working_dir
         self.base_dir = base_dir
+        self.project_dir = project_dir #Directory for the actual working files
 
     def cout(self, text: str):
         rprint(text)
 
     def get_work_dir(self) -> str:
         return f"{self.base_dir}/{self.working_dir}/{self.repo_name}"
+    
+    def get_project_dir(self) -> str:
+        return f"{self.get_work_dir()}/{self.project_dir}"
+
+    def get_scripts_dir(self) -> str:
+        return f"{self.get_work_dir()}/scripts"
 
     def Do_No_VNet_Customization(self ):
         dir = self.get_work_dir()
         self._clone_env_repo(False)
 
+    def create_proejct_dir(self):
+        """
+            Creates the Project directory
+        """
+        res = self._run_process(['cp', '-R', f"{self.get_work_dir()}/example", f"{self.get_project_dir()}"],True)
+        #cp -R <source_folder>/* <destination_folder>
+
+
+    
     def do_rename_terraform_file(self):
         dir = self.get_work_dir()
         logger.debug(f"Renaming TF_File: '{dir}/example/terraform.tfvars.sample' To '{dir}/example/terraform.tfvars'")
@@ -41,9 +57,16 @@ class Stream:
 
     def do_cloud_login(self):
         logger.debug("Setting up Azure Cloud")
-        res = self._run_process(['az','cloud', 'set', '--name', 'AzureUSGovernment'])
-        res = self._run_process(['az','login'])
-        res = self._run_process(['az','cloud', 'list', '-o', 'table'])
+        success = False
+        try:
+            res = self._run_process(['az','cloud', 'set', '--name', 'AzureUSGovernment'])
+            res = self._run_process(['az','login'])
+            res = self._run_process(['az','cloud', 'list', '-o', 'table'])
+            success = True
+        except Exception as e:
+            logger.debug(f"Error logging in to Azure Cloud: {e}")
+            self.cout_error("Error logging in to Azure Cloud")
+        return success
 
     def do_run_terraform(self):
         logger.debug("Running Terraform")
@@ -68,17 +91,17 @@ class Stream:
 
 
     def _run_terraform_init(self):
-        res = self._run_process(['terraform', f"-chdir={self.get_work_dir()}/example" ,'init'])
+        res = self._run_process(['terraform', f"-chdir={self.get_project_dir()}" ,'init'])
 
     def _run_terraform(self):
-        args = ['terraform', f"-chdir={self.get_work_dir()}/example", 'apply', '-auto-approve']
+        args = ['terraform', f"-chdir={self.get_project_dir()}", 'apply', '-auto-approve']
         res = self._run_process(args)
         self._copy_scripts()
-        #res = self._run_process(['source', './fetch-kubeconfig.sh'], True, cwd=f"{self.get_work_dir()}/example", shell=False)
+        #res = self._run_process(['source', './fetch-kubeconfig.sh'], True, cwd=f"{self.get_project_dir()}", shell=False)
         #logger.debug(f"fetch-kubeconfig.sh: {res}\n")
-        res = self._run_process(['./fetch-ssh-key.sh'], True, cwd=f"{self.get_work_dir()}/example", shell=False)
-        logger.debug(f"fetch-ssh-key.sh: {res}\n")
-        res = self._run_process(['./run_after_deploy.sh'], True, cwd=f"{self.get_work_dir()}/example" ,shell=True)
+        #res = self._run_process(['./fetch-ssh-key.sh'], True, cwd=f"{self.get_project_dir()}", shell=False) #--> Done with run_after_deploy.sh
+        #logger.debug(f"fetch-ssh-key.sh: {res}\n")
+        res = self._run_process(['./run_after_deploy.sh'], True, cwd=f"{self.get_project_dir()}" ,shell=True)
         logger.debug(f"run_after_deploy.sh: {res}\n")
         self.cout_success(res)
     

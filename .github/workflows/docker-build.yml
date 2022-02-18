@@ -67,8 +67,8 @@ jobs:
           context: .
           push: true
           tags: | 
-            shuffereu/bowtie:latest
-            shuffereu/bowtie:${{github.run_number}}
+            shuffereu/dsopbuilder:latest
+            shuffereu/dsopbuilder:${{github.run_number}}
 
   Container_Scan:
     needs: Docker_Build
@@ -78,7 +78,7 @@ jobs:
       - name: Container Scan
         uses: azure/container-scan@v0
         with:
-          image-name: shuffereu/bowtie:latest 
+          image-name: shuffereu/dsopbuilder:latest 
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           ignore_failure: true

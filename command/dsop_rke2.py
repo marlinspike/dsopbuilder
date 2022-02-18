@@ -1,5 +1,5 @@
 from sqlite3 import Time
-from util import streams
+from util.streams import Stream
 from appsettings import AppSettings
 import pathlib
 import util
@@ -15,9 +15,11 @@ import typer
 import command.settings as settings
 import command.dsop_rke2 as dsop_rke2
 
+stream = Stream()
+console = Console()
 app = typer.Typer()
-app.add_typer(settings.app, name="settings")
-app.add_typer(dsop_rke2.app, name="rke2")
+
+
 
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
@@ -30,18 +32,18 @@ _app_settings = None
 _working_dir = "working"
 _clone_dsop_rke2_dir = "dsop_rke2"
 _stream = None
-_terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/example/terraform.tfvars"
-
 
 @app.command()
-def main():
+def apply(
+    project:str = typer.Option("foo", help="Project name for which to initialize Terraform and Scripts. Can be added to a git repo.",prompt="Project Name", confirmation_prompt=True),
+    config:str = typer.Option("n", help="Print app config settings (these configure Azure Cloud Login and Terraform)"),
+    destroy:str = typer.Option("n", help="Destroy the resources created by Terraform. If 'y', Destroy. USE WITH CARE!")):
     """
-        Deprecated. Please use the rke2 or aks commands
+        Applies the RKE2 Terraform and builds the Rancher RKE2 Cluster in Azure.
     """
-    print("Deprecated. Please use the rke2 or aks commands")
-'''
 
-    _stream = streams.Stream(_clone_dsop_rke2_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
+    _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/{project}/terraform.tfvars"
+    _stream = Stream(_clone_dsop_rke2_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
 
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
 
@@ -64,6 +66,7 @@ def main():
             logger.debug("Initializing Azure Cloud")
             if (settings.is_logged_in() == False):
                 _stream.cout_error("You're not logged in to Azure. Please log in to Azure to continue.")
+                _stream.cout_success("You can use the command: main.py settings azloginusgov to log in to Azure Government")
                 exit(1)
                 #_stream.do_cloud_login()
                 #_stream.cout_success("Azure Login Completed.")
@@ -76,13 +79,12 @@ def main():
             logger.debug("Running Terraform")
             _stream._run_terraform()
             _stream.cout_success("Deployment Completed!")
+            _stream.cout_success(f"Your deployment folder is: {str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/{project}")
+            _stream.cout_success("Next Steps: ")
+            _stream.cout_success(f"1. Change to the deployment folder:  cd {_working_dir}/{_clone_dsop_rke2_dir}/{project}")
+            _stream.cout_success(f"2. Export the KubeConfig:  source ../scripts/fetch-kubeconfig.sh")
+
     else:
         #VNet Customization
         ...
     Timed()
-
-'''
-
-if __name__ == '__main__':
-    #typer.run(apply)
-    app()

@@ -17,8 +17,6 @@ jobs:
         with:
           python-version: 3.8
 
-      - run: pip install -r requirements.txt
-      - run: pytest -vv
 
       #Security Check - Bandit
       - uses: actions/checkout@v2
@@ -33,13 +31,6 @@ jobs:
         with:
           name: Security report
           path: output/security_report.txt
-
-      # Code Coverage
-      - name: Generate coverage report
-        run: |
-          pip install pytest
-          pip install pytest-cov
-          pytest --cov=./ --cov-report=xml
                       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1

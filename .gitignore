@@ -6,6 +6,7 @@ working
 .DS_Store
 _test.py
 _test.log
+test.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

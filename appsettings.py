@@ -5,6 +5,9 @@ from util import streams
 from rich.console import Console
 console = Console()
 import logging
+import util.strings
+from util import io
+
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
@@ -30,6 +33,17 @@ class AppSettings:
             logger.error("Unable to open config.json")
             streams.cout_error(f"There was an error reading appsettings from: {self.appsettings_file}")
             streams.cout_error(e)
+
+    def validate(self) -> bool:
+        '''
+            Validates the settings read from the config.json file
+        '''
+        is_valid = True
+        rg = self.settings["general"]["cluster_name"]
+        if (util.strings.validate_dsop_rg(rg) == False):
+            is_valid = False
+            io.cout_error("Invalid Cluster Name: Cluster names cannot contain special characters or '_'. Please edit config.json in the 'config' directory.")
+        return is_valid
 
 if __name__ == '__main__':
     _app = AppSettings()

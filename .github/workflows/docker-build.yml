@@ -7,17 +7,27 @@ on:
   workflow_dispatch
 
 jobs:
-  docker:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
+      - name: Install requirements
+        run: pip install -r requirements.txt
 
+      - name: Run automated tests  
+        run: pytest -vv
+
+  Security_Check:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       #Security Check - Bandit
       - uses: actions/checkout@v2
       - name: Security check - Bandit
@@ -35,6 +45,10 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
+  Docker_Build:
+    needs: Security_Check
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -53,7 +67,7 @@ jobs:
             shuffereu/bowtie:latest
             shuffereu/bowtie:${{github.run_number}}
 
-  security:
+  Container_Scan:
     needs: docker
     runs-on: ubuntu-latest
     steps:

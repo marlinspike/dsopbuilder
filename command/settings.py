@@ -22,6 +22,14 @@ def list():
     app_settings.print_settings_json()
 
 @app.command()
+def validate():
+    '''
+        Validates the settings in the config.json file
+    '''
+    app_settings = AppSettings()
+    app_settings.validate()
+
+@app.command()
 def azaccount():
     """
     List the currently logged in account
@@ -29,7 +37,7 @@ def azaccount():
     try:
         doc = json.loads(subprocess.run([AZ_STATUS], check=False, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8'))
     except Exception as e:
-        stream.cout_error("You're not logged in to Azure! Use 'azlogingov' to log in to Azure Government.")
+        io.cout_error("You're not logged in to Azure! Use 'azlogingov' to log in to Azure Government.")
         exit(1)
     #console.print_json(json.dumps(doc, indent=3))
     table = Table(title="Azure Cloud")
@@ -77,15 +85,16 @@ def azlist():
                 is_not_usgovcloud = True
         table.add_row(cloudName, isActive)
     if (is_not_usgovcloud):
-        stream.cout_error("Switching to Azure US Government Cloud")
+        io.cout_error("Switching to Azure US Government Cloud")
         if (stream.do_cloud_login()):
-            stream.cout_success("Successfully logged in to Azure US Government")
+            io.cout_success("Successfully logged in to Azure US Government")
 
     console.print(table)
-    stream.cout_success("You're logged in to Azure! Please ensure that the correct Cloud is set.")
+    io.cout_success("You're logged in to Azure! Please ensure that the correct Cloud is set.")
+    
 
 @app.command()
-def azloginusgov():
+def azlogingov():
     """
     Switches to USGovCloud
     """

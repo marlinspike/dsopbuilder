@@ -59,23 +59,23 @@ def main():
             splice_file_token(_terraform_file, "location", _app_settings.settings["general"]["location"])
             splice_file_token(_terraform_file, "server_public_ip", _app_settings.settings["connectivity"]["server_public_ip"])
             splice_file_token(_terraform_file, "server_open_ssh_public", _app_settings.settings["connectivity"]["server_open_ssh_public"])
-            _stream.cout_success("Completed Terraform Token splicing!")
+            cout_success("Completed Terraform Token splicing!")
         with console.status("Initializing Azure-CLI login...", spinner="earth"):
             logger.debug("Initializing Azure Cloud")
             if (settings.is_logged_in() == False):
-                _stream.cout_error("You're not logged in to Azure. Please log in to Azure to continue.")
+                cout_error("You're not logged in to Azure. Please log in to Azure to continue.")
                 exit(1)
                 #_stream.do_cloud_login()
-                #_stream.cout_success("Azure Login Completed.")
+                #cout_success("Azure Login Completed.")
         do_apply = typer.confirm("Continue with Terraform deploy?", abort=True)
         with console.status("Initializing Terraform...", spinner="earth"):
             logger.debug("Initializing Terraform")
             _stream._run_terraform_init()
-            _stream.cout_success("Terraform Init Completed!")
+            cout_success("Terraform Init Completed!")
         with console.status("Running Terraform... This may take a while: ", spinner="earth"):
             logger.debug("Running Terraform")
             _stream._run_terraform()
-            _stream.cout_success("Deployment Completed!")
+            cout_success("Deployment Completed!")
     else:
         #VNet Customization
         ...

@@ -4,6 +4,8 @@ import subprocess
 from subprocess import PIPE
 import pathlib
 import logging
+from util.io import *
+
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
@@ -65,7 +67,7 @@ class Stream:
             success = True
         except Exception as e:
             logger.debug(f"Error logging in to Azure Cloud: {e}")
-            self.cout_error("Error logging in to Azure Cloud")
+            cout_error("Error logging in to Azure Cloud")
         return success
 
     def do_run_terraform(self):
@@ -73,12 +75,6 @@ class Stream:
         self._run_terraform_init()
         self._run_terraform()
 
-
-    def cout_error(self, text: str):
-        rprint(f"[italic red]{text}[/italic red]")
-
-    def cout_success(self, text: str):
-        rprint(f"[green]{text}[/green]")
 
 
     def _clone_env_repo(self, dsop_customization_required: bool):
@@ -103,7 +99,7 @@ class Stream:
         #logger.debug(f"fetch-ssh-key.sh: {res}\n")
         res = self._run_process(['./run_after_deploy.sh'], True, cwd=f"{self.get_project_dir()}" ,shell=True)
         logger.debug(f"run_after_deploy.sh: {res}\n")
-        self.cout_success(res)
+        cout_success(res)
     
     def _copy_scripts(self):
         res = self._run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/fetch-kubeconfig.sh', '/PyBuilder/working/dsop_rke2/example'])

@@ -68,7 +68,7 @@ jobs:
             shuffereu/bowtie:${{github.run_number}}
 
   Container_Scan:
-    needs: docker
+    needs: Docker_Build
     runs-on: ubuntu-latest
     steps:
   #Container Scan

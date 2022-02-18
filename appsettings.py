@@ -43,6 +43,9 @@ class AppSettings:
         if (util.strings.validate_dsop_rg(rg) == False):
             is_valid = False
             io.cout_error("Invalid Cluster Name: Cluster names cannot contain special characters or '_'. Please edit config.json in the 'config' directory.")
+        else:
+            io.cout_success("Settings in config.json are Valid!")
+            
         return is_valid
 
 if __name__ == '__main__':

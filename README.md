@@ -142,3 +142,12 @@ Commands:
 
 This command applies the Terraform to build out the Rancher RKE2 cluster in Azure. PyBuilder prompts you for a **Project Name**, which is a folder that it creates and initializes with the Terraform scripts needed.
 
+**Important:** The final step to being able to use *kubectl* to control your cluster requires you to execute the script file indicated after you've run *rke2 apply*.
+
+```
+Deployment Completed!
+Your deployment folder is: /PyBuilder/working/dsop_rke2/foo
+Next Steps:
+1. Change to the deployment folder:  cd working/dsop_rke2/foo
+2. Export the KubeConfig:  source ../scripts/fetch-kubeconfig.sh
+```

@@ -1,3 +1,5 @@
+[![Docker Image CI](https://github.com/marlinspike/dsopbuilder/actions/workflows/docker-build.yml/badge.svg?branch=bowtie)](https://github.com/marlinspike/dsopbuilder/actions/workflows/docker-build.yml)
+
 # DSOPBuilder and PyBuilder #
 DevSecOps Builder (DSOPBuilder) is the complete toolset to create a Platform One Big Bang DevSecOps stack on Azure, running on Rancher RKE2. The toolset consists of the following:
 - DSOPBuilder Docker Image: The docker image contains all the required tools and the cloned Git Repos to deploy the Azure Infrastructure using Terraform.

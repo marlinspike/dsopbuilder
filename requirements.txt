@@ -2,3 +2,4 @@ rich
 click
 azure-keyvault==1.1.0
 typer
+pytest

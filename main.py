@@ -14,10 +14,12 @@ from rich.panel import Panel
 import typer
 import command.settings as settings
 import command.dsop_rke2 as dsop_rke2
+import command.dsop_aks as dsop_aks
 
 app = typer.Typer()
 app.add_typer(settings.app, name="settings", help="Show and configure Settings information")
 app.add_typer(dsop_rke2.app, name="rke2", help="Apply settings and build a Rancher RKE2 Cluster in Azure")
+app.add_typer(dsop_aks.app, name="aks", help="Apply settings and build an AKS Cluster in Azure")
 
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
@@ -29,6 +31,7 @@ console = Console()
 _app_settings = None
 _working_dir = "working"
 _clone_dsop_rke2_dir = "dsop_rke2"
+_clone_dsop_aks_dir = "dsop_aks"
 _stream = None
 _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/example/terraform.tfvars"
 

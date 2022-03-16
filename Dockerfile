@@ -33,7 +33,6 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     nano \
     gettext-base \
-    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 #Terraform
@@ -60,8 +59,8 @@ RUN set -ex \
     && mv ./azcopy /usr/local/bin
 
 #Fixing KeyVault bug in AZ CLI (issue/13507)
-RUN sudo pip3 uninstall azure-keyvault && \
-    sudo pip3 install azure-keyvault==1.1.0
+RUN pip3 uninstall azure-keyvault && \
+    pip3 install azure-keyvault==1.1.0
 
 #PyBuilder
 COPY . /PyBuilder
@@ -71,6 +70,8 @@ RUN pip install -r requirements.txt
 RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
 #RUN git clone git@github.com:p1-dsop/dsop-environment.git working/bigbang
 
-
+RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh
+RUN chmod +x working/dsop_rke2/scripts/fetch-kubeconfig.sh
+RUN chmod +x working/dsop_rke2/scripts/fetch-ssh-key.sh
+RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh
 RUN chmod +x working/dsop_rke2/example/run_after_deploy.sh
-RUN chmod +x working/dsop_rke2/scripts/*.sh

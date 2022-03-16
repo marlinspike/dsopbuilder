@@ -1,7 +1,11 @@
+[![Continuous Build, Test, Deploy](https://github.com/marlinspike/dsopbuilder/actions/workflows/docker-build.yml/badge.svg)](https://github.com/marlinspike/dsopbuilder/actions/workflows/docker-build.yml)
+
 # DSOPBuilder and PyBuilder #
 DevSecOps Builder (DSOPBuilder) is the complete toolset to create a Platform One Big Bang DevSecOps stack on Azure, running on Rancher RKE2. The toolset consists of the following:
 - DSOPBuilder Docker Image: The docker image contains all the required tools and the cloned Git Repos to deploy the Azure Infrastructure using Terraform.
 - PyBuilder: The *PyBuilder* Python app provides an easy way to deploy the entire stack and automates many manual steps. PyBuilder allows you to configure the Terraform _tfvars_ file via the config file provided.
+
+The total deploy time is approximately *6-7 minutes*.
 
 ### Running DSOP Builder ###
 The [DSOPBuilder Docker image](https://hub.docker.com/r/shuffereu/dsopbuilder) is automatically built and pushed to my DockerHub container repository. The DSOPBuilder image contains the PyBuilder app you'll use to deploy P1 DevSecOps to Azure.
@@ -64,13 +68,88 @@ Here's what the parameters mean:
 ## Running PyBuilder ##
 PyBuilder is a Python3 app (Python3 and everything else you'll need is already installed in the Docker iamge). Basic usage of PyBuilder:
 
-- Run Post Installer: 
-``` 
-    cd working/dsop_rke2/example
-    source run_after_deploy.sh 
+PyBuilder's command interface is easy to use, and help is built in.
+
+*Command*: `python3 main.py --help`
+
+This prints out the following information:
 ```
-- Executing the app: `python3 main.py --help`
-- Displaying the variables you can configure: `python3 main.py --settings=y`
-- Editing the values you need to modify for Terraform: Update the _config.json_ file in the _config_ folder with the values you'd like Terraform to use to deploy the solution. See the Section below that discusses each variable.
-- Deploying the RKE2 Big Bang on Azure platform: `python3 main.app --deploy=y`
-- Tearing down the cluster after you've created it: `python3 main.py --destroy=y`
+Usage: main.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --install-completion [bash|zsh|fish|powershell|pwsh]
+                                  Install completion for the specified shell.
+  --show-completion [bash|zsh|fish|powershell|pwsh]
+                                  Show completion for the specified shell, to
+                                  copy it or customize the installation.
+  --help                          Show this message and exit.
+
+Commands:
+  main      Deprecated.
+  rke2      Apply settings and build a Rancher RKE2 Cluster in Azure
+  settings  Show and configure Settings information
+```
+
+### The settings command: Configuring PyBuilder and Logging into Azure
+
+PyBuilder requires you to be logged in to Azure so that you can apply the Terraform needed, and makes it easy to do that through the settings command. 
+
+*Command*: `python3 main.py settings --help`
+
+This prints out the following information:
+```
+Usage: main.py settings [OPTIONS] COMMAND [ARGS]...
+
+  Show and configure Settings information
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  azaccount   List the currently logged in account
+  azlist      Lists all registered Clouds, Prints Cloud status
+  azlogingov  Switches to USGovCloud
+  list        Lists the current configuration settings (config.json)
+  validate    Validates the settings in the config.json file
+```
+
+- Use the *azaccount* subcommand to show the currently logged in Azure Account
+```
+┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Cloud Name        ┃ Is Default ┃ Tenant ID                            ┃ User                                         ┃
+┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ AzureUSGovernment │ True       │ 4*******-b***-4***-a***-0*********** │ ******@**********************onmicrosoft.com │
+└───────────────────┴────────────┴──────────────────────────────────────┴──────────────────────────────────────────────┘
+```
+
+- Use the *azlist* subcommand to show the currently Active Azure Cloud
+```
+┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Cloud Name        ┃ Is Active ┃
+┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━┩
+│ AzureCloud        │ False     │
+│ AzureChinaCloud   │ False     │
+│ AzureUSGovernment │ True      │
+│ AzureGermanCloud  │ False     │
+└───────────────────┴───────────┘
+```
+
+- Use the *azlogingov* subcommand to Switch to and Login to Azure US Government
+- Use the *list* subcommand to print the current config.json file
+- Use the *validate* subcommand to validate the config.json file
+
+
+### The rke2 command: Creating an rke2 Cluster in Azure
+`python3 main.py rke2 apply`
+
+This command applies the Terraform to build out the Rancher RKE2 cluster in Azure. PyBuilder prompts you for a **Project Name**, which is a folder that it creates and initializes with the Terraform scripts needed.
+
+**Important:** The final step to being able to use *kubectl* to control your cluster requires you to execute the script file indicated after you've run *rke2 apply*.
+
+```
+Deployment Completed!
+Your deployment folder is: /PyBuilder/working/dsop_rke2/foo
+Next Steps:
+1. Change to the deployment folder:  cd working/dsop_rke2/foo
+2. Export the KubeConfig:  source ../scripts/fetch-kubeconfig.sh
+```

@@ -87,6 +87,7 @@ def apply(
             cout_success("Next Steps: ")
             cout_success(f"1. Change to the deployment folder:  cd {_working_dir}/{_clone_dsop_aks_dir}/{project}")
             #cout_success(f"2. Export the KubeConfig:  source ../scripts/fetch-kubeconfig.sh")
+            cout_success(f"2. Set KubeConfig: az aks get-credentials -g $(terraform output -raw rg_name) -n $(terraform output -raw aks_cluster_name)")
 
     else:
         #VNet Customization

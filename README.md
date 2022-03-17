@@ -172,7 +172,7 @@ Next Steps:
 
 `python3 main.py aks apply`
 
-This command applies the Terraform to build out the Rancher RKE2 cluster in Azure. PyBuilder prompts you for a **Project Name**, which is a folder that it creates and initializes with the Terraform scripts needed.
+This command applies the Terraform to build out an Azure Kubernetes Service (AKS) cluster in Azure. PyBuilder prompts you for a **Project Name**, which is a folder that it creates and initializes with the Terraform scripts needed.
 
 **Important 1:** This deploys AKS with limited RBAC permissions. You must supply an Azure Active Directory (AAD) Group ID that will maintain access rights to the cluster. All users who wish to access the cluster must be part of this AAD Group. This is set in config.json as `aad_group_ids` setting - it is a list of Group IDs.
 

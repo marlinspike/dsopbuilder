@@ -68,6 +68,9 @@ WORKDIR /PyBuilder
 RUN ls -l
 RUN pip install -r requirements.txt
 RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
+
+# TODO: Need to update this to point to p1-dsop after forking
+RUN git clone https://github.com/timothymeyers/dsop-aks working/dsop_aks
 #RUN git clone git@github.com:p1-dsop/dsop-environment.git working/bigbang
 
 RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh

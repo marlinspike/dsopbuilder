@@ -42,7 +42,7 @@ def apply(
         Applies the RKE2 Terraform and builds the Rancher RKE2 Cluster in Azure.
     """
     Timed()
-    _app_settings = AppSettings()
+    _app_settings = AppSettings('./config/config.json')
     #Ensure that app-settings are valid
     if(_app_settings.validate() == False):
         exit(1)

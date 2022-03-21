@@ -26,8 +26,16 @@ def validate():
     '''
         Validates the settings in the config.json file
     '''
-    app_settings = AppSettings()
+    app_settings = AppSettings('./config/config.json')
     app_settings.validate()
+
+@app.command()
+def validatebb():
+    '''
+        Validates the settings in the bigbang-config.json file
+    '''
+    app_settings = AppSettings('./config/bigbang-config.json')
+    app_settings.validate_bigbang()
 
 @app.command()
 def azaccount():

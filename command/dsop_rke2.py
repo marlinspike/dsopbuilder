@@ -1,5 +1,5 @@
 from sqlite3 import Time
-from util.streams import Stream
+from util.streams import *
 from appsettings import AppSettings
 import pathlib
 import util
@@ -15,7 +15,7 @@ import typer
 import command.settings as settings
 import command.dsop_rke2 as dsop_rke2
 
-stream = Stream()
+#stream = Stream()
 console = Console()
 app = typer.Typer()
 
@@ -48,7 +48,7 @@ def apply(
         exit(1)
     
     _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/{project}/terraform.tfvars"
-    _stream = Stream(_clone_dsop_rke2_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
+    _stream = RKE2_Stream(_clone_dsop_rke2_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
 
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
 
@@ -56,7 +56,7 @@ def apply(
     if bool(_app_settings.settings["custom_vnet_settings"]["vnet_customize"]) == False:
         if os.path.isdir(f"{str(pathlib.Path().resolve())}/{_working_dir}") == False: _stream.Do_No_VNet_Customization()#No VNet Customization
         _stream.do_rename_terraform_file()
-        _stream.create_proejct_dir()
+        _stream.create_project_dir()
         with console.status("Applying Config settings...", spinner="earth"):
             logger.debug("Applying config settings")
             splice_file_token(_terraform_file,"cluster_name", _app_settings.settings["general"]["cluster_name"])

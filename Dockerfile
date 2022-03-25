@@ -82,4 +82,10 @@ RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh
 RUN chmod +x working/dsop_rke2/example/run_after_deploy.sh
 
 RUN git clone https://github.com/timothymeyers/dsop-environment working/bigbang
+RUN mv gpg-key-gen.sh working/bigbang/scripts/gpg-key-gen.sh
 RUN chmod +x working/bigbang/scripts/*.sh
+
+RUN git clone -b 1.11.0 --single-branch https://repo1.dso.mil/platform-one/big-bang/bigbang.git working/bigbang/scripts/bigbang-for-flux
+RUN chmod +x working/bigbang/scripts/bigbang-for-flux/scripts/*.sh
+
+RUN chmod +x install-all.sh

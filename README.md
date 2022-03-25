@@ -1,27 +1,34 @@
 [![Continuous Build, Test, Deploy](https://github.com/marlinspike/dsopbuilder/actions/workflows/docker-build.yml/badge.svg)](https://github.com/marlinspike/dsopbuilder/actions/workflows/docker-build.yml)
 
 # DSOPBuilder and PyBuilder #
+
 DevSecOps Builder (DSOPBuilder) is the complete toolset to create a Platform One Big Bang DevSecOps stack on Azure, running on Rancher RKE2. The toolset consists of the following:
+
 - DSOPBuilder Docker Image: The docker image contains all the required tools and the cloned Git Repos to deploy the Azure Infrastructure using Terraform.
 - PyBuilder: The *PyBuilder* Python app provides an easy way to deploy the entire stack and automates many manual steps. PyBuilder allows you to configure the Terraform _tfvars_ file via the config file provided.
 
 The total deploy time is approximately *6-7 minutes*.
 
 ### Running DSOP Builder ###
+
 The [DSOPBuilder Docker image](https://hub.docker.com/r/shuffereu/dsopbuilder) is automatically built and pushed to my DockerHub container repository. The DSOPBuilder image contains the PyBuilder app you'll use to deploy P1 DevSecOps to Azure.
 
 ## Pulling and Running the Image from DockerHub ##
+
 First make sure you have [Docker Desktop](https://docs.docker.com/get-docker/) installed on your machine. To pull the image:
 `docker pull shuffereu/dsopbuilder`
 
 ### Running the image ###
+
 To run the image you pulled earlier:
 `docker run -it shuffereu/dsopbuilder`
-The _-it_ parameter tells Docker that you want to shell into the running container.
+The *-it* parameter tells Docker that you want to shell into the running container.
 
 ## Configuring PyBuilder
+
 The PyBuilder configuration file, found at *config/config.json* must be configured. Here's what that file looks like:
-```
+
+```json
 {
     "general": {
         "cluster_name": "dsop_rke2",
@@ -52,20 +59,23 @@ The PyBuilder configuration file, found at *config/config.json* must be configur
 Here's what the parameters mean:
 
 **General**
+
 - cluster_name: The name of the RKE2 Kubernetes Cluster
 - cloud: "AzureUSGovernmentCloud" here means Azure Government
 - location: The Azure Region to deploy in
 
 **Cluster-Size**
+
 - server_instance_count: Number of masters
 - agent_instance_count: Number of nodes required
 - vm_size: Azure VM SKU. Make sure this SKU exists in the Cloud and Region configured
 
 **Connectivity**
+
 - server_public_ip: True if you need a Public IP for your cluster; False otherwise
 
-
 ## Running PyBuilder ##
+
 PyBuilder is a Python3 app (Python3 and everything else you'll need is already installed in the Docker iamge). Basic usage of PyBuilder:
 
 PyBuilder's command interface is easy to use, and help is built in.
@@ -73,7 +83,8 @@ PyBuilder's command interface is easy to use, and help is built in.
 *Command*: `python3 main.py --help`
 
 This prints out the following information:
-```
+
+```text
 Usage: main.py [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -114,7 +125,8 @@ Commands:
 ```
 
 - Use the *azaccount* subcommand to show the currently logged in Azure Account
-```
+
+```text
 ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Cloud Name        ┃ Is Default ┃ Tenant ID                            ┃ User                                         ┃
 ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
@@ -123,7 +135,8 @@ Commands:
 ```
 
 - Use the *azlist* subcommand to show the currently Active Azure Cloud
-```
+
+```text
 ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┓
 ┃ Cloud Name        ┃ Is Active ┃
 ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━┩
@@ -140,16 +153,35 @@ Commands:
 
 
 ### The rke2 command: Creating an rke2 Cluster in Azure
+
 `python3 main.py rke2 apply`
 
 This command applies the Terraform to build out the Rancher RKE2 cluster in Azure. PyBuilder prompts you for a **Project Name**, which is a folder that it creates and initializes with the Terraform scripts needed.
 
 **Important:** The final step to being able to use *kubectl* to control your cluster requires you to execute the script file indicated after you've run *rke2 apply*.
 
-```
+```bash
 Deployment Completed!
 Your deployment folder is: /PyBuilder/working/dsop_rke2/foo
 Next Steps:
 1. Change to the deployment folder:  cd working/dsop_rke2/foo
 2. Export the KubeConfig:  source ../scripts/fetch-kubeconfig.sh
+```
+
+### The aks command: Creating an Azure Kubernetes Service (AKS) cluster in Azure
+
+`python3 main.py aks apply`
+
+This command applies the Terraform to build out an Azure Kubernetes Service (AKS) cluster in Azure. PyBuilder prompts you for a **Project Name**, which is a folder that it creates and initializes with the Terraform scripts needed.
+
+**Important 1:** This deploys AKS with limited RBAC permissions. You must supply an Azure Active Directory (AAD) Group ID that will maintain access rights to the cluster. All users who wish to access the cluster must be part of this AAD Group. This is set in config.json as `aad_group_ids` setting - it is a list of Group IDs.
+
+**Important 2:** The final step to being able to use *kubectl* to control your cluster requires you to use `az aks get-credentials` to obtain cluster configuration.
+
+```bash
+Deployment Completed!
+Your deployment folder is: /PyBuilder/working/dsop_aks/foo
+Next Steps:
+1. Change to the deployment folder:  cd working/dsop_aks/foo
+2. Set KubeConfig:  az aks get-credentials -g $(terraform output -raw rg_name) -n $(terraform output -raw aks_cluster_name)
 ```

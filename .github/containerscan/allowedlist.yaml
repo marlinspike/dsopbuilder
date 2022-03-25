@@ -1,0 +1,4 @@
+general:
+  vulnerabilities:
+    - CIS-DI-0010 
+    - CIS-DI-0009

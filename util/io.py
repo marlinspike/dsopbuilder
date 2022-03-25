@@ -29,6 +29,23 @@ def splice_file_token(filename:str, key:str, new_value:str):
     with open(filename, 'w') as fil:
         fil.writelines(lines)
 
+def splice_file_list(filename:str, key:str, new_value:list):
+    '''
+        Replaces the value for the key specified with the new_value list passed, in the filename given.
+    '''
+
+    logger.debug(f"Splicing file: {locals()}")
+    lines = None
+    with open(filename, 'r') as fil:
+        lines = fil.readlines()
+
+    for i, line in enumerate(lines):
+        if key in line.strip():
+            lines[i] = str(f"{key} = {new_value}\n").replace("\'", "\"")
+
+    with open(filename, 'w') as fil:
+        fil.writelines(lines)
+
 
 def do_replace_tokens():
     splice_file_token("", "cluster_name")

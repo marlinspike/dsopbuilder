@@ -15,7 +15,7 @@ import typer
 import command.settings as settings
 import command.dsop_rke2 as dsop_rke2
 
-#stream = Stream()
+stream = Stream()
 console = Console()
 app = typer.Typer()
 

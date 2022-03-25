@@ -34,6 +34,23 @@ def do_replace_tokens():
     splice_file_token("", "cluster_name")
 
 
+def create_file_from_template(template:str, filename:str, tokens:dict):
+    logger.debug(f"Creating {filename} from {template}")
+    
+    lines = None
+
+    with open(template, 'r') as file_in:
+        lines = file_in.readlines()
+
+    for i, line in enumerate(lines):
+        for key in tokens.keys():
+            if line.find(key) != -1:
+                lines[i] = lines[i].replace (key, tokens[key])
+
+    with open(filename, 'w') as file_out:
+        file_out.writelines(lines)
+
+
 if __name__ == '__main__':
     #splice_file_token("test.txt", "cluster_name", "cluster_name = \"reuben\"")
     print(pathlib.Path().resolve())
@@ -69,6 +86,9 @@ def cout_error(text: str):
     return rtext
     #rprint(f"[italic red]{text}[/italic red]")
     
+def cout_error_and_exit(text: str, exit_code:int=-1):
+    cout_error(text)
+    exit(exit_code)
 
 def cout_success( text: str):
     '''

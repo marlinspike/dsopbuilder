@@ -108,7 +108,13 @@ def azlogingov():
     """
     stream.do_cloud_login() #Set to switch to US Gov Cloud
     
-    
+@app.command()
+def kubeversion():
+    """
+    Lists the kubernetes versions for both client and server (if defined)
+    Will exit kubectl version returns non-zero exit status
+    """
+    stream.kube_version()
 
 if __name__ == '__main__':
     typer.run(azlogin)

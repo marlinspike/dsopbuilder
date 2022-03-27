@@ -1,5 +1,5 @@
 from sqlite3 import Time
-from util.streams import Stream
+from util.streams import *
 from appsettings import AppSettings
 import pathlib
 import util
@@ -48,7 +48,9 @@ def apply(
         exit(1)
     
     _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_aks_dir}/{project}/terraform.tfvars"
-    _stream = Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
+    
+    # TODO: Need to address that this is RKE2 stream
+    _stream = RKE2_Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
 
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us\nwith Tim Meyers - timothy.m.meyers@gmail.com (AKS deployment)"))
 

@@ -42,7 +42,7 @@ def apply(
         Applies the AKS Terraform and builds the AKS Cluster in Azure.
     """
     Timed()
-    _app_settings = AppSettings()
+    _app_settings = AppSettings('./config/config.json')
     #Ensure that app-settings are valid
     if(_app_settings.validate() == False):
         exit(1)
@@ -72,8 +72,6 @@ def apply(
                 cout_error("You're not logged in to Azure. Please log in to Azure to continue.")
                 cout_success("You can use the command: main.py settings azloginusgov to log in to Azure Government")
                 exit(1)
-                #_stream.do_cloud_login()
-                #cout_success("Azure Login Completed.")
         do_apply = typer.confirm("Continue with Terraform deploy?", abort=True)
         with console.status("Initializing Terraform...", spinner="earth"):
             logger.debug("Initializing Terraform")
@@ -86,7 +84,6 @@ def apply(
             cout_success(f"Your deployment folder is: {str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_aks_dir}/{project}")
             cout_success("Next Steps: ")
             cout_success(f"1. Change to the deployment folder:  cd {_working_dir}/{_clone_dsop_aks_dir}/{project}")
-            #cout_success(f"2. Export the KubeConfig:  source ../scripts/fetch-kubeconfig.sh")
             cout_success(f"2. Set KubeConfig: az aks get-credentials -g $(terraform output -raw rg_name) -n $(terraform output -raw aks_cluster_name)")
 
     else:

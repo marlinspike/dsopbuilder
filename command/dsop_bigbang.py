@@ -75,6 +75,8 @@ def deploy ():
 
     Timed()
 
+    print_success()
+
 @app.command()
 def verify():
     """
@@ -291,3 +293,9 @@ def validate_settings_and_environment(_app_settings:AppSettings):
         logger.debug("Verifying Kubernetes Cluster")
         settings.kubeversion()
         cout_success (f"Kubernetes cluster is ready!")
+
+def print_success ():
+    cout_success("Deployment Completed!")
+    cout_success("Next Steps:")
+    cout_success("1. Be sure to save off the *.crt and *.key files in working/bigbang/dev so you can import them into your browser and access Big Bang")
+    cout_success("2. Monitor / Verify Big Bang reconciliation by running: python3 main.py bb verify. This usually takes 10-20 minutes")

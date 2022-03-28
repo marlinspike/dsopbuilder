@@ -116,17 +116,13 @@ class Stream:
         except Exception as e:
             cout_error_and_exit (f"Kubernetes cluster is not ready: {e}")
 
-    def fetch_kubeconfig(self):
-        logger.debug("Fetching kubeconfig")
-        # self._run_process(['./run_after_deploy.sh'], cwd=self.get_project_dir(), shell=True)
-
     def sleep(self, seconds:int):
         '''
         sleep, largely for debugging
         '''
         self._run_process(f"sleep {seconds}".split())
 
-class RKE2_Stream (Stream):
+class K8S_Stream (Stream):
     def do_run_terraform(self):
         logger.debug("Running Terraform")
         self._run_terraform_init()
@@ -176,15 +172,13 @@ class RKE2_Stream (Stream):
         res = self._run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/fetch-kubeconfig.sh', '/PyBuilder/working/dsop_rke2/example'])
         res = self._run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/fetch-ssh-key.sh', '/PyBuilder/working/dsop_rke2/example'])  
 
-
-class AKS_Stream (Stream):
-    pass
-
 class BigBang_Stream (Stream):
-    
-    # ---- refactor
 
     def generate_root_key_and_cert (self):
+        '''
+        Generates openssl ca.key and ca.crt files in the BigBang project directory.
+        '''
+
         logger.debug ("Generating root (CA) cert")
         pdir = self.get_project_dir()
 
@@ -205,6 +199,10 @@ class BigBang_Stream (Stream):
         cout_success (f"Next step: Import ca.crt in your browser")
 
     def generate_domain_key_and_cert (self, domain:str):
+        '''
+        Generate openssl <domain>.key and <domain>.crt files in the BigBang project directory.
+        '''
+
         logger.debug (f"Generating domain cert for <{domain}>")
         pdir = self.get_project_dir()
         
@@ -222,6 +220,9 @@ class BigBang_Stream (Stream):
         cout_success (f"\tDon't forget that you must import ca.crt in your browser to make it accept the certificate.")
 
     def get_domain_key_and_cert_base64 (self, hostname):
+        '''
+        Returns a tuple of of the key and cert file for <hostname> in base64 string.
+        '''       
 
         istio_gw_key = self._run_processes_piped (
             ['cat', f"{hostname}.key"],
@@ -241,6 +242,11 @@ class BigBang_Stream (Stream):
         pass
 
     def get_gpg_fingerprint (self, gpg_key_name:str, create_if_needed:bool = False):
+        '''
+        Returns the gpg fingerprint for the provided key name. Optionally create the gpg key if it does not exist.
+
+        Note: This command uses gpg-key-gen.sh script provided in the container. Could not get gpg to operate without user interaction when executing via PyBuilder app.
+        '''
         
         if not self._gpg_key_name_exists(gpg_key_name):
             if create_if_needed:
@@ -255,6 +261,9 @@ class BigBang_Stream (Stream):
         return fingerprint
 
     def generate_gpg_secret_file (self, fingerprint:str):
+        '''
+        Generates the gpg secret file - this later becomes a secret in Kubernetes
+        '''
         command = f"gpg --export-secret-key --armor {fingerprint}".split()
         
         fout = open(f"bigbangkey.asc", "w+")
@@ -262,6 +271,9 @@ class BigBang_Stream (Stream):
         fout.close()
 
     def sops_encrypt(self, file:str, cwd:str=""):
+        '''
+        Encryptes provided filename in place using SOPS. Exits on error.
+        '''
         command = f"sops --encrypt --in-place {file}".split()
         res = subprocess.run(command, cwd=cwd, capture_output=True, encoding='UTF-8')
 
@@ -271,6 +283,11 @@ class BigBang_Stream (Stream):
             cout_error_and_exit(f"{res.stderr}")
 
     def exec_kubectl_cmd(self, cmd=str):
+        '''
+        kubectl passthrough. Executes an arbitrary kubectl command. 
+        Requires kubeconfig to be set.
+        Exits on Error code.
+        '''
         command = f"kubectl {cmd}".split()
         res = subprocess.run(command, capture_output=True, encoding='UTF-8')
 
@@ -280,6 +297,9 @@ class BigBang_Stream (Stream):
             cout_error_and_exit(f"{res.stderr}")
 
     def install_flux (self, ib_user:str, ib_pat:str, ib_email:str):
+        '''
+        Installs flux using the bigbang install_flux.sh script.
+        '''
         command = f"./scripts/install_flux.sh --registry-username {ib_user} --registry-password {ib_pat} --registry-email {ib_email} -w 180".split()
 
         flux_dir = f"{self.get_scripts_dir()}/bigbang-for-flux"
@@ -291,7 +311,6 @@ class BigBang_Stream (Stream):
 
 #        cout_success(f"{res.stdout}")
 #        cout_error(f"{res.stderr}")
-
 
     # --------------------------------
 

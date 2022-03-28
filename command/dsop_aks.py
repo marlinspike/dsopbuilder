@@ -50,7 +50,7 @@ def apply(
     _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_aks_dir}/{project}/terraform.tfvars"
     
     # TODO: Need to address that this is RKE2 stream
-    _stream = RKE2_Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
+    _stream = K8S_Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
 
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us\nwith Tim Meyers - timothy.m.meyers@gmail.com (AKS deployment)"))
 

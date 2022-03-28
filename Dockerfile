@@ -32,7 +32,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     python3-pip \
     nano \
-    vim \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 

@@ -90,5 +90,3 @@ RUN chmod +x working/bigbang/scripts/*.sh
 
 RUN git clone -b 1.11.0 --single-branch https://repo1.dso.mil/platform-one/big-bang/bigbang.git working/bigbang/scripts/bigbang-for-flux
 RUN chmod +x working/bigbang/scripts/bigbang-for-flux/scripts/*.sh
-
-RUN chmod +x install-all.sh

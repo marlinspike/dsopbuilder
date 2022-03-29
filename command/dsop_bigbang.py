@@ -11,8 +11,8 @@ import os
 import time
 import sys
 import logging
-#from rich import print
-#from rich.panel import Panel
+from rich import print
+from rich.panel import Panel
 import typer
 import command.settings as settings
 #import command.dsop_rke2 as dsop_rke2

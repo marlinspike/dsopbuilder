@@ -13,8 +13,9 @@ logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, 
 logger = logging.getLogger(__name__)
 
 class AppSettings:
-    def __init__(self):
-        self.appsettings_file = './config/config.json'
+
+    def __init__(self, config_file:str):
+        self.appsettings_file = config_file
         self.settings = {}
         self.read_appsettings()
     
@@ -44,9 +45,41 @@ class AppSettings:
             is_valid = False
             io.cout_error("Invalid Cluster Name: Cluster names cannot contain special characters or '_'. Please edit config.json in the 'config' directory.")
         else:
-            io.cout_success("Settings in config.json are Valid!")
+            io.cout_success("Kubernetes settings are valid!")
             
         return is_valid
+
+    def validate_bigbang(self) -> bool:
+        '''
+            Validates the settings read from the config-bigbang.json file
+        '''
+
+        is_valid = True
+
+        if (self.settings["credentials"]["github_user"].__contains__("__")):
+            is_valid = False
+            io.cout_error("github_user not set in config-bigbang.json")
+        if (self.settings["credentials"]["github_pat"].__contains__("__")):
+            is_valid = False
+            io.cout_error("github_pat not set in config-bigbang.json")
+        if (self.settings["credentials"]["ironbank_user"].__contains__("__")):
+            is_valid = False
+            io.cout_error("ironbank_user not set in config-bigbang.json")
+        if (self.settings["credentials"]["ironbank_pat"].__contains__("__")):
+            is_valid = False
+            io.cout_error("ironbank_pat not set in config-bigbang.json")
+        if (self.settings["bigbang"]["repository"]["url"].__contains__("__")):
+            is_valid = False
+            io.cout_error("bigbang repository url not set in config-bigbang.json")
+        if (self.settings["bigbang"]["repository"]["branch"].__contains__("__")):
+            is_valid = False
+            io.cout_error("bigbang repository branch not set in config-bigbang.json")
+
+        if is_valid:
+            io.cout_success("Big Bang settings in config-bigbang.json are valid!")
+
+        return is_valid
+
 
 if __name__ == '__main__':
     _app = AppSettings()

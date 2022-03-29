@@ -1,5 +1,6 @@
 from sqlite3 import Time
-from util.streams import *
+from util.streams import Stream
+from util.k8s_streams import K8S_Stream
 from appsettings import AppSettings
 import pathlib
 import util
@@ -42,7 +43,7 @@ def apply(
         Applies the AKS Terraform and builds the AKS Cluster in Azure.
     """
     Timed()
-    _app_settings = AppSettings('./config/config.json')
+    _app_settings = AppSettings('./config/config-aks.json')
     #Ensure that app-settings are valid
     if(_app_settings.validate() == False):
         exit(1)
@@ -57,7 +58,7 @@ def apply(
     if bool(_app_settings.settings["custom_vnet_settings"]["vnet_customize"]) == False:
         if os.path.isdir(f"{str(pathlib.Path().resolve())}/{_working_dir}") == False: _stream.Do_No_VNet_Customization()#No VNet Customization
         _stream.do_rename_terraform_file()
-        _stream.create_proejct_dir()
+        _stream.create_project_dir()
         with console.status("Applying Config settings...", spinner="earth"):
             logger.debug("Applying config settings")
             splice_file_token(_terraform_file,"cluster_name", _app_settings.settings["general"]["cluster_name"])
@@ -86,7 +87,7 @@ def apply(
             cout_success("Next Steps: ")
             cout_success(f"1. Change to the deployment folder:  cd {_working_dir}/{_clone_dsop_aks_dir}/{project}")
             cout_success(f"2. Set KubeConfig: az aks get-credentials -g $(terraform output -raw rg_name) -n $(terraform output -raw aks_cluster_name)")
-
+            cout_success(f"3. After merging kubeconfig, run kubectl version to force AKS AAD device login.")
     else:
         #VNet Customization
         ...

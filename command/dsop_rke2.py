@@ -1,5 +1,6 @@
 from sqlite3 import Time
-from util.streams import *
+from util.streams import Stream
+from util.k8s_streams import K8S_Stream
 from appsettings import AppSettings
 import pathlib
 import util
@@ -42,7 +43,7 @@ def apply(
         Applies the RKE2 Terraform and builds the Rancher RKE2 Cluster in Azure.
     """
     Timed()
-    _app_settings = AppSettings('./config/config.json')
+    _app_settings = AppSettings('./config/config-rke2.json')
     #Ensure that app-settings are valid
     if(_app_settings.validate() == False):
         exit(1)

@@ -21,9 +21,7 @@
             "istio-gw-key": "<akv-secret-id?>"
         },
         "flux": {
-            "deploy_flux" : 1,
-            "bb_repository" : "https://repo1.dso.mil/platform-one/big-bang/bigbang.git",
-            "bb_tag" : "1.11.0"
+            "deploy_flux" : 1            
         }
     }
 }

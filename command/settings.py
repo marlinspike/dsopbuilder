@@ -22,21 +22,20 @@ def list():
     app_settings.print_settings_json()
 
 @app.command()
-def validate():
+def validate(rke2:bool = typer.Option (False, help="Validate settings in config-rke2.json file", show_default=False),
+            aks:bool  = typer.Option (False, help="Validate settings in config-aks.json file", show_default=False),
+            bigbang: bool = typer.Option (False, help="Validate settings in config-bigbang.json file", show_default=False)):
     '''
-        Validates the settings in the config.json file
+        Validates the config settings
     '''
-    app_settings = AppSettings('./config/config.json')
-    app_settings.validate()
 
-@app.command()
-def validatebb():
-    '''
-        Validates the settings in the bigbang-config.json file
-    '''
-    app_settings = AppSettings('./config/bigbang-config.json')
-    app_settings.validate_bigbang()
+    if rke2: AppSettings('./config/config-rke2.json').validate()
+    if aks: AppSettings('./config/config-aks.json').validate()
+    if bigbang: AppSettings('./config/config-bigbang.json').validate_bigbang()
 
+    if not (rke2 or aks or bigbang):
+        io.cout_error_and_exit ("Please run --help and specify a config file to validate.")
+    
 @app.command()
 def azaccount():
     """

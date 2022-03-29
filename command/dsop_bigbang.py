@@ -37,7 +37,7 @@ def deploy ():
 
     Timed()
 
-    _app_settings = AppSettings('./config/bigbang-config.json')
+    _app_settings = AppSettings('./config/config-bigbang.json')
     _bb_stream   = BigBang_Stream(_clone_bigbang_dir, _working_dir, pathlib.Path().resolve(), project_dir='dev')
 
     #------- Validate settings; check Kubernetes ---------------

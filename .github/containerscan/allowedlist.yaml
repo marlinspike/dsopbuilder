@@ -2,3 +2,4 @@ general:
   vulnerabilities:
     - CIS-DI-0010 
     - CIS-DI-0009
+    - CVE-2020-26160

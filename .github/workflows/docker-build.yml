@@ -69,16 +69,3 @@ jobs:
           tags: | 
             shuffereu/dsopbuilder:latest
             shuffereu/dsopbuilder:${{github.run_number}}
-
-  Container_Scan:
-    needs: Docker_Build
-    runs-on: ubuntu-latest
-    steps:
-  #Container Scan
-      - name: Container Scan
-        uses: azure/container-scan@v0
-        with:
-          image-name: shuffereu/dsopbuilder:latest 
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          ignore_failure: true

@@ -1,5 +1,5 @@
 rich
-click
+click==8.0.4
 azure-keyvault==1.1.0
 typer
 pytest

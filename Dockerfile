@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     python3-pip \
     nano \
+    vim \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
@@ -83,9 +84,10 @@ RUN chmod +x working/dsop_rke2/scripts/fetch-ssh-key.sh
 RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh
 RUN chmod +x working/dsop_rke2/example/run_after_deploy.sh
 
-RUN git clone https://github.com/timothymeyers/dsop-environment working/bigbang
+RUN git clone https://github.com/timothymeyers/dsop-environment-1.19.0 working/bigbang
 RUN mv gpg-key-gen.sh working/bigbang/scripts/gpg-key-gen.sh
 RUN chmod +x working/bigbang/scripts/*.sh
 
-RUN git clone -b 1.11.0 --single-branch https://repo1.dso.mil/platform-one/big-bang/bigbang.git working/bigbang/scripts/bigbang-for-flux
+RUN git clone -b 1.30.1 --single-branch https://repo1.dso.mil/platform-one/big-bang/bigbang.git working/bigbang/scripts/bigbang-for-flux
 RUN chmod +x working/bigbang/scripts/bigbang-for-flux/scripts/*.sh
+ENV GPG_TTY="/dev/pts/0"

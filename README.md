@@ -15,7 +15,7 @@ The [DSOPBuilder Docker image](https://hub.docker.com/r/shuffereu/dsopbuilder) i
 
 ## Pulling and Running the Image from DockerHub ##
 
-First make sure you have [Docker Desktop](https://docs.docker.com/get-docker/) installed on your machine. To pull the image:
+First make sure you have [Docker Desktop](https://docs.docker.com/get-docker/) or [Rancher Desktop](https://rancherdesktop.io/) installed on your machine. To pull the image:
 `docker pull shuffereu/dsopbuilder`
 
 ### Running the image ###

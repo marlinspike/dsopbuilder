@@ -40,7 +40,7 @@ def deploy ():
     _app_settings = AppSettings('./config/config-bigbang.json')
     _bb_stream   = BigBang_Stream(_clone_bigbang_dir, _working_dir, pathlib.Path().resolve(), project_dir='dev')
 
-    print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us\nwith Tim Meyers - timothy.m.meyers@gmail.com (AKS & BB)"))
+    print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool"))
 
 
     #------- Validate settings; check Kubernetes ---------------

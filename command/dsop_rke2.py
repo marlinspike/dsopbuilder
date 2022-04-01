@@ -51,7 +51,7 @@ def apply(
     _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/{project}/terraform.tfvars"
     _stream = K8S_Stream(_clone_dsop_rke2_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
 
-    print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us"))
+    print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool"))
 
 
     if bool(_app_settings.settings["custom_vnet_settings"]["vnet_customize"]) == False:

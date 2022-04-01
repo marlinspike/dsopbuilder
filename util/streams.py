@@ -81,7 +81,7 @@ class Stream:
         #cout_success (f"{p2}")
         #cout_error (f"{p2.stdout}")
 
-        return f"{p2.stdout}".replace('\n','')
+        return f"{p2.stdout}"
 
     def git_store_credentials(self, user:str, pat:str,):
         

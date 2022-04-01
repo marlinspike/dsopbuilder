@@ -11,8 +11,8 @@ import os
 import time
 import sys
 import logging
-#from rich import print
-#from rich.panel import Panel
+from rich import print
+from rich.panel import Panel
 import typer
 import command.settings as settings
 #import command.dsop_rke2 as dsop_rke2
@@ -66,7 +66,7 @@ def deploy ():
     # ------- Update and encrypt yaml secrets -----------------------
 
     update_secrets_yaml(_app_settings, _bb_stream)
-    update_istio_yaml(_app_settings, _bb_stream)
+    #update_istio_yaml(_app_settings, _bb_stream)
 
     # ------- Configure kubernetes cluster - namespaces, secrets
 
@@ -241,14 +241,19 @@ def update_secrets_yaml (_app_settings:AppSettings, _bb_stream:BigBang_Stream):
         logger.debug(log_line)
         _bb_stream.sleep(2)
     
+        istio_key, istio_crt = _bb_stream.get_domain_key_and_cert_base64(_app_settings.settings["bigbang"]["hostname"])
+        
         secret_tokens = {
                 "${IRON_BANK_USER}": _app_settings.settings["credentials"]["ironbank_user"],
-                "${IRON_BANK_PAT}" : _app_settings.settings["credentials"]["ironbank_pat"]
+                "${IRON_BANK_PAT}" : _app_settings.settings["credentials"]["ironbank_pat"],
+                "${ISTIO_GW_KEY}": istio_key,
+                "${ISTIO_GW_CRT}": istio_crt
             }
                 
         secrets_yaml_template = f"{_bb_stream.get_scripts_dir()}/secrets.enc.yaml.template"
-        secrets_yaml_file = f"{_bb_stream.get_work_dir()}/base/secrets.enc.yaml"
+        secrets_yaml_file = f"{_bb_stream.get_work_dir()}/base/secrets.enc.yaml"       
         create_file_from_template (secrets_yaml_template, secrets_yaml_file, secret_tokens)
+        create_file_from_template (secrets_yaml_template, f"{secrets_yaml_file}.debug", secret_tokens)
         _bb_stream.sops_encrypt ("secrets.enc.yaml", f"{_bb_stream.get_work_dir()}/base")
         cout_success ("secrets.enc.yaml file created")
 

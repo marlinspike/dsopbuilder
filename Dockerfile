@@ -10,6 +10,8 @@ LABEL "email"="reuben@cleet.us"
 ENV SOPS_VER="3.7.2"
 ENV KUSTOMIZE_VER="4.5.2"
 ENV KUBECTL_VER="v1.23.1"
+ENV GPG_TTY="/dev/pts/0"
+
 #apt-get
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
 
@@ -53,6 +55,9 @@ RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kus
 #RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
 #    && chmod +x /usr/bin/kustomize
 
+#Flux
+RUN curl -s https://fluxcd.io/install.sh | bash
+
 #SOPS
 ADD https://github.com/mozilla/sops/releases/download/v${SOPS_VER}/sops-v${SOPS_VER}.linux /usr/local/bin/sops
 RUN chmod +x /usr/local/bin/sops
@@ -90,4 +95,3 @@ RUN chmod +x working/bigbang/scripts/*.sh
 
 RUN git clone -b 1.30.1 --single-branch https://repo1.dso.mil/platform-one/big-bang/bigbang.git working/bigbang/scripts/bigbang-for-flux
 RUN chmod +x working/bigbang/scripts/bigbang-for-flux/scripts/*.sh
-ENV GPG_TTY="/dev/pts/0"

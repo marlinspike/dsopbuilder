@@ -1,5 +1,5 @@
 import json
-from typing import DefaultDict
+from typing import DefaultDict, List
 from collections import defaultdict
 from util import streams
 from rich.console import Console
@@ -14,10 +14,18 @@ logger = logging.getLogger(__name__)
 
 class AppSettings:
 
-    def __init__(self, config_file:str):
+    def __init__(self, config_file:str, raw_json_input=False):
+        '''
+            Creates the AppSettings object
+            Parameters:
+                config_file (str): relative path to file
+                raw_json_input (bool): True if config_file is a raw json string; False if it's a file 
+        '''
         self.appsettings_file = config_file
+        self.raw_json_input = raw_json_input
         self.settings = {}
         self.read_appsettings()
+        
     
     def print_settings_json(self):
         console.print_json(json.dumps(self.settings, indent=3))
@@ -26,10 +34,13 @@ class AppSettings:
     def read_appsettings(self):
         try:
             logger.debug("Read settings")
-            with open(self.appsettings_file) as data_file:
-                appsettings = json.load(data_file)
-                self.settings = appsettings
-                return self.settings
+            if(self.raw_json_input == True):
+                self.settings = json.loads(self.appsettings_file)
+            else:
+                with open(self.appsettings_file) as data_file:
+                    appsettings = json.load(data_file)
+                    self.settings = appsettings
+            return self.settings
         except Exception as e:
             logger.error("Unable to open config.json")
             streams.cout_error(f"There was an error reading appsettings from: {self.appsettings_file}")
@@ -82,5 +93,6 @@ class AppSettings:
 
 
 if __name__ == '__main__':
-    _app = AppSettings()
+    _app = AppSettings('./config/config-rke2.json')
+    _app = AppSettings("{'general': {'cluster_name': 'dsop-rke2', 'cloud': 'AzureUSGovernmentCloud', 'location': 'usgovvirginia'}, 'cluster-size': {'server_instance_count': 1, 'agent_instance_count': 2, 'vm_size': 'Standard_D8_v3'}, 'connectivity': {'server_public_ip': 'true', 'server_open_ssh_public': 'true'}, 'custom_vnet_settings': {'vnet_customize': 0, 'use_external_vnet': 0, 'external_vnet_resource_group': 'rke2_rg', 'external_vnet_name': 'rke2-vnet', 'external_vnet_subnet_name': 'rke2-subnet'}, 'clone_dsop_repo_name': 'dsop_rke2'}", True)
     settings_dict = _app.read_appsettings()

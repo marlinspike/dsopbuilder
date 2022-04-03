@@ -106,8 +106,11 @@ def azlist():
     cout_success("You're logged in to Azure! Please ensure that the correct Cloud is set.")
     
 
-@app.command
+@app.command()
 def azlogingov():
+    '''
+        Switches to USGovCloud and logs in
+    '''
     logger.debug("Setting up Azure Cloud")
     success = False
     try:

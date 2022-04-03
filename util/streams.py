@@ -39,7 +39,7 @@ class Stream:
         """
             Creates the Project directory
         """
-        res = self._run_process(['cp', '-R', f"{self.get_work_dir()}/example", f"{self.get_project_dir()}"],True)
+        res = run_process(['cp', '-R', f"{self.get_work_dir()}/example", f"{self.get_project_dir()}"],True)
         #cp -R <source_folder>/* <destination_folder>
 
 
@@ -49,10 +49,10 @@ class Stream:
         logger.debug(f"Renaming TF_File: '{dir}/example/terraform.tfvars.sample' To '{dir}/example/terraform.tfvars'")
         if os.path.isfile(f"\"{dir}/example/terraform.tfvars\"") == False:
             logger.debug(f"Copying File: {dir}/example/terraform.tfvars.sample -> {dir}/example/terraform.tfvars")
-            res = self._run_process(["cp", f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"]) 
+            res = run_process(["cp", f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"]) 
 
     def do_terraform_destroy(self):
-        res = self._run_process(['terraform', f"-chdir={self.working_dir}/{self.repo_name}/example" ,'destroy'])
+        res = run_process(['terraform', f"-chdir={self.working_dir}/{self.repo_name}/example" ,'destroy'])
 
     def do_vnet_customization():
         pass
@@ -61,9 +61,9 @@ class Stream:
         logger.debug("Setting up Azure Cloud")
         success = False
         try:
-            res = self._run_process(['az','cloud', 'set', '--name', 'AzureUSGovernment'])
-            res = self._run_process(['az','login'])
-            res = self._run_process(['az','cloud', 'list', '-o', 'table'])
+            res = run_process(['az','cloud', 'set', '--name', 'AzureUSGovernment'])
+            res = run_process(['az','login'])
+            res = run_process(['az','cloud', 'list', '-o', 'table'])
             success = True
         except Exception as e:
             logger.debug(f"Error logging in to Azure Cloud: {e}")
@@ -79,43 +79,34 @@ class Stream:
 
     def _clone_env_repo(self, dsop_customization_required: bool):
         args = ['git', 'clone', _default_dsop_rke2_repo, f"{self.working_dir}/{self.repo_name}"]
-        res = self._run_process(args)
+        res = run_process(args)
 
     def run_console(self, ):
-        res = self._run_process(['ls', '-l', '-a'],True)
-        res = self._run_process(['echo', 'Hello', 'World!'],True)
+        res = run_process(['ls', '-l', '-a'],True)
+        res = run_process(['echo', 'Hello', 'World!'],True)
 
 
     def _run_terraform_init(self):
-        res = self._run_process(['terraform', f"-chdir={self.get_project_dir()}" ,'init'])
+        res = run_process(['terraform', f"-chdir={self.get_project_dir()}" ,'init'])
 
     def _run_terraform(self):
         args = ['terraform', f"-chdir={self.get_project_dir()}", 'apply', '-auto-approve']
-        res = self._run_process(args)
+        res = run_process(args)
         self._copy_scripts()
-        #res = self._run_process(['source', './fetch-kubeconfig.sh'], True, cwd=f"{self.get_project_dir()}", shell=False)
+        #res = run_process(['source', './fetch-kubeconfig.sh'], True, cwd=f"{self.get_project_dir()}", shell=False)
         #logger.debug(f"fetch-kubeconfig.sh: {res}\n")
-        #res = self._run_process(['./fetch-ssh-key.sh'], True, cwd=f"{self.get_project_dir()}", shell=False) #--> Done with run_after_deploy.sh
+        #res = run_process(['./fetch-ssh-key.sh'], True, cwd=f"{self.get_project_dir()}", shell=False) #--> Done with run_after_deploy.sh
         #logger.debug(f"fetch-ssh-key.sh: {res}\n")
-        res = self._run_process(['./run_after_deploy.sh'], True, cwd=f"{self.get_project_dir()}" ,shell=True)
+        res = run_process(['./run_after_deploy.sh'], True, cwd=f"{self.get_project_dir()}" ,shell=True)
         logger.debug(f"run_after_deploy.sh: {res}\n")
         cout_success(res)
     
     def _copy_scripts(self):
-        res = self._run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/fetch-kubeconfig.sh', '/PyBuilder/working/dsop_rke2/example'])
-        res = self._run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/fetch-ssh-key.sh', '/PyBuilder/working/dsop_rke2/example'])
+        res = run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/fetch-kubeconfig.sh', '/PyBuilder/working/dsop_rke2/example'])
+        res = run_process(['cp', '/PyBuilder/working/dsop_rke2/scripts/fetch-ssh-key.sh', '/PyBuilder/working/dsop_rke2/example'])
         logger.debug(f"Copying script files to example directory")
     
         
-
-    def _run_process(self, args:list, read_output:bool=False, cwd:str="", shell:bool=False) -> str:
-        logger.debug(f"Running process: {locals()}")
-        if cwd.strip() == "":
-            result = subprocess.run(args, capture_output=False, text=True)
-            return None
-        else:
-            result = subprocess.run(args, capture_output=True, text=True, cwd=cwd, shell=shell)
-            return result.stdout
 
 if __name__ == '__main__':
     _stream = Stream()

@@ -19,14 +19,10 @@ stream = Stream()
 console = Console()
 app = typer.Typer()
 
-
-
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 console = Console()
-
-
 
 _app_settings = None
 _working_dir = "working"
@@ -74,7 +70,7 @@ def apply(
                 exit(1)
                 #_stream.do_cloud_login()
                 #cout_success("Azure Login Completed.")
-        do_apply = typer.confirm("Continue with Terraform deploy?", abort=True)
+        #do_apply = typer.confirm("Continue with Terraform deploy?", abort=True)
         with console.status("Initializing Terraform...", spinner="earth"):
             logger.debug("Initializing Terraform")
             _stream._run_terraform_init()

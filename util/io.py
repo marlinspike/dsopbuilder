@@ -6,6 +6,7 @@ from decimal import Decimal
 from rich import print as rprint
 from rich.text import Text
 from rich.console import Console
+import subprocess
 
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='../app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
@@ -46,6 +47,20 @@ def splice_file_list(filename:str, key:str, new_value:list):
     with open(filename, 'w') as fil:
         fil.writelines(lines)
 
+
+def run_process(self, args:list, read_output:bool=False, cwd:str="", shell:bool=False) -> str:
+    '''
+        Spawns and runs a process and runs the command specified in args
+    '''
+    logger.debug(f"Running process: {locals()}")
+    if cwd.strip() == "":
+        result = subprocess.run(args, capture_output=False, text=True)
+        return None
+    else:
+        result = subprocess.run(args, capture_output=True, text=True, cwd=cwd, shell=shell)
+        return result.stdout
+
+        
 
 def do_replace_tokens():
     splice_file_token("", "cluster_name")

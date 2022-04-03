@@ -1,6 +1,5 @@
 from sqlite3 import Time
 from util.streams import Stream
-from util.k8s_streams import K8S_Stream
 from appsettings import AppSettings
 import pathlib
 import util
@@ -20,18 +19,14 @@ stream = Stream()
 console = Console()
 app = typer.Typer()
 
-
-
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 console = Console()
 
-
-
 _app_settings = None
 _working_dir = "working"
-_clone_dsop_aks_dir = "dsop_aks"
+_clone_dsop_aks_dir = "dsop-aks"
 _stream = None
 
 @app.command()
@@ -49,9 +44,7 @@ def apply(
         exit(1)
     
     _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_aks_dir}/{project}/terraform.tfvars"
-    
-    _stream = K8S_Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
-
+    _stream = Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool"))
 
 
@@ -61,18 +54,20 @@ def apply(
         _stream.create_project_dir()
         with console.status("Applying Config settings...", spinner="earth"):
             logger.debug("Applying config settings")
+            splice_file_token(_terraform_file,"resource_group_name", f"{_app_settings.settings['general']['cluster_name']}-rg")
             splice_file_token(_terraform_file,"cluster_name", _app_settings.settings["general"]["cluster_name"])
             splice_file_token(_terraform_file, "cloud", _app_settings.settings["general"]["cloud"])
             splice_file_token(_terraform_file, "location", _app_settings.settings["general"]["location"])
             splice_file_token(_terraform_file, "server_public_ip", _app_settings.settings["connectivity"]["server_public_ip"])
             splice_file_token(_terraform_file, "server_open_ssh_public", _app_settings.settings["connectivity"]["server_open_ssh_public"])
             splice_file_list(_terraform_file, "aad_group_ids", _app_settings.settings["custom_aad_settings_for_aks"]["aad_group_ids"])
+            splice_file_list(_terraform_file, "kubernetes_version", f"\"{_app_settings.settings['general']['kubernetes_version']}\"")
             cout_success("Completed Terraform Token splicing!")
         with console.status("Initializing Azure-CLI login...", spinner="earth"):
             logger.debug("Initializing Azure Cloud")
             if (settings.is_logged_in() == False):
                 cout_error("You're not logged in to Azure. Please log in to Azure to continue.")
-                cout_success("You can use the command: main.py settings azloginusgov to log in to Azure Government")
+                cout_success("You can use the command: 'main.py settings azlogingov' to log in to Azure Government")
                 exit(1)
         do_apply = typer.confirm("Continue with Terraform deploy?", abort=True)
         with console.status("Initializing Terraform...", spinner="earth"):

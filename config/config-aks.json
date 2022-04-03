@@ -22,7 +22,7 @@
         "external_vnet_subnet_name" : "aks-subnet"
     },
     "custom_aad_settings_for_aks" : {
-        "aad_group_ids" : ["45ce38da-f41b-4bfa-bb1a-19cd8b322983"]
+        "aad_group_ids" : ["45ce0000-0000-0000-0000-19cd8b320000"]
     },
     "clone_dsop_repo_name": "dsop-aks"
   }

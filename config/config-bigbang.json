@@ -1,0 +1,27 @@
+{
+    "credentials": {
+        "github_user" : "__GH_USER__",
+        "github_pat" : "__GH_PAT__",
+        "ironbank_user" : "__IB_USER__",
+        "ironbank_pat" : "__IB_PAT__"
+    },
+    "bigbang" : {
+        "hostname" : "bigbang.dev",
+        "azure_deploy_name": "bigbang",
+        "namespace": "bigbang",
+        "repository" : {
+            "url" : "__GH_REPO__",
+            "branch": "__GH_BRANCH__"
+        },
+        "keys": {
+            "gpg_key_name" : "bigbang-sops",
+            "create_keys" : 1,
+            "upload_keys" : 0,
+            "istio-gw-crt": "<akv-secret-id?>",
+            "istio-gw-key": "<akv-secret-id?>"
+        },
+        "flux": {
+            "deploy_flux" : 1            
+        }
+    }
+}

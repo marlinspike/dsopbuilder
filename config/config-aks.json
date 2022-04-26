@@ -1,6 +1,6 @@
 {
     "general": {
-        "cluster_name": "dsop-rke2-07c",
+        "cluster_name": "dsop-aks",
         "cloud": "AzureUSGovernmentCloud",
         "location": "usgovvirginia"
     },
@@ -16,10 +16,13 @@
     "custom_vnet_settings" : {
         "vnet_customize": 0,
         "use_external_vnet": 0,
-        "external_vnet_resource_group" : "rke2_rg",
-        "external_vnet_name" : "rke2-vnet",
-        "external_vnet_subnet_name" : "rke2-subnet"
+        "external_vnet_resource_group" : "aks_rg",
+        "external_vnet_name" : "aks-vnet",
+        "external_vnet_subnet_name" : "aks-subnet"
     },
-    "clone_dsop_repo_name": "dsop_rke2"
+    "custom_aad_settings_for_aks" : {
+        "aad_group_ids" : ["00000000-0000-0000-0000-000000000000"]
+    },
+    "clone_dsop_repo_name": "dsop_aks"
   }
   

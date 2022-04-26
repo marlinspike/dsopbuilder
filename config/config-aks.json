@@ -1,8 +1,9 @@
 {
     "general": {
-        "cluster_name": "dsop-aks",
+        "cluster_name": "rc-dsop-aks",
         "cloud": "AzureUSGovernmentCloud",
-        "location": "usgovvirginia"
+        "location": "usgovvirginia",
+        "kubernetes_version": "1.22.6"
     },
     "cluster-size": {
         "server_instance_count": 1,
@@ -21,8 +22,8 @@
         "external_vnet_subnet_name" : "aks-subnet"
     },
     "custom_aad_settings_for_aks" : {
-        "aad_group_ids" : ["00000000-0000-0000-0000-000000000000"]
+        "aad_group_ids" : ["45ce0000-0000-0000-0000-19cd8b320000"]
     },
-    "clone_dsop_repo_name": "dsop_aks"
+    "clone_dsop_repo_name": "dsop-aks"
   }
   

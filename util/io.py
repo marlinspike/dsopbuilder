@@ -6,6 +6,7 @@ from decimal import Decimal
 from rich import print as rprint
 from rich.text import Text
 from rich.console import Console
+import subprocess
 
 log_format = '%(asctime)s %(filename)s: %(message)s'
 logging.basicConfig(filename='../app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
@@ -66,6 +67,30 @@ def create_file_from_template(template:str, filename:str, tokens:dict):
 
     with open(filename, 'w') as file_out:
         file_out.writelines(lines)
+
+
+def run_process(args:list, read_output:bool=False, cwd:str="", shell:bool=False) -> str:
+    logger.debug(f"Running process: {locals()}")
+    if cwd.strip() == "":
+        result = subprocess.run(args, capture_output=False, text=True)
+        return None
+    else:
+        result = subprocess.run(args, capture_output=True, text=True, cwd=cwd, shell=shell)
+        return result.stdout
+
+def run_processes_piped(in_args:list, out_args:list, cwd:str="", encoding:str=""):
+    '''
+        Simulates the process of running
+
+        $ in_args | out_args
+    '''
+    logger.debug (f"Running piped processes: {locals()}")
+
+    if cwd.strip() == "":
+        cwd = '.'
+    p1 = subprocess.Popen(in_args, stdout=subprocess.PIPE, cwd=cwd)
+    p2 = subprocess.run(out_args,stdin=p1.stdout, cwd=cwd, capture_output=True, encoding='UTF-8', shell=True)
+    return f"{p2.stdout}".replace('\n','')
 
 
 if __name__ == '__main__':

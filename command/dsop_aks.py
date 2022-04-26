@@ -1,5 +1,6 @@
 from sqlite3 import Time
 from util.streams import Stream
+from util.k8s_streams import K8S_Stream
 from appsettings import AppSettings
 import pathlib
 import util
@@ -44,7 +45,7 @@ def apply(
         exit(1)
     
     _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_aks_dir}/{project}/terraform.tfvars"
-    _stream = Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
+    _stream = K8S_Stream(_clone_dsop_aks_dir, _working_dir, pathlib.Path().resolve(), project_dir=project)
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool"))
 
 

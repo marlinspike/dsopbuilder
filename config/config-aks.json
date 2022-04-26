@@ -2,11 +2,12 @@
     "general": {
         "cluster_name": "dsop-aks",
         "cloud": "AzureUSGovernmentCloud",
-        "location": "usgovvirginia"
+        "location": "usgovvirginia",
+        "kubernetes_version": "1.22.6"
     },
     "cluster-size": {
         "server_instance_count": 1,
-        "agent_instance_count": 5,
+        "agent_instance_count": 2,
         "vm_size": "Standard_D8_v3"
     },
     "connectivity": {

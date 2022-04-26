@@ -7,8 +7,8 @@ LABEL "author"="Reuben Cleetus"
 LABEL "version"="1.0"
 LABEL "email"="reuben@cleet.us"
 
-ENV SOPS_VER="3.7.1"
-ENV KUSTOMIZE_VER="2.0.0"
+ENV SOPS_VER="3.7.2"
+ENV KUSTOMIZE_VER="4.5.2"
 ENV KUBECTL_VER="v1.23.1"
 #apt-get
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
@@ -46,11 +46,15 @@ RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin
 
 #Kustomize
-RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
-    && chmod +x /usr/bin/kustomize
+RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VER}/kustomize_v${KUSTOMIZE_VER}_linux_amd64.tar.gz" | \
+  tar -xz -C "/usr/bin" kustomize \
+  && chmod +x /usr/bin/kustomize
+#RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
+#    && chmod +x /usr/bin/kustomize
 
 #SOPS
 ADD https://github.com/mozilla/sops/releases/download/v${SOPS_VER}/sops-v${SOPS_VER}.linux /usr/local/bin/sops
+RUN chmod +x /usr/local/bin/sops
 
 #AZCopy
 RUN set -ex \
@@ -78,3 +82,10 @@ RUN chmod +x working/dsop_rke2/scripts/fetch-kubeconfig.sh
 RUN chmod +x working/dsop_rke2/scripts/fetch-ssh-key.sh
 RUN chmod +x working/dsop_rke2/scripts/check-terraform.sh
 RUN chmod +x working/dsop_rke2/example/run_after_deploy.sh
+
+RUN git clone https://github.com/timothymeyers/dsop-environment working/bigbang
+RUN mv gpg-key-gen.sh working/bigbang/scripts/gpg-key-gen.sh
+RUN chmod +x working/bigbang/scripts/*.sh
+
+RUN git clone -b 1.11.0 --single-branch https://repo1.dso.mil/platform-one/big-bang/bigbang.git working/bigbang/scripts/bigbang-for-flux
+RUN chmod +x working/bigbang/scripts/bigbang-for-flux/scripts/*.sh

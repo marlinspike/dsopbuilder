@@ -1,11 +1,16 @@
 import typer
 from appsettings import AppSettings
-from util import io
-from util.streams import Stream
+from util.io import *
 import json
 import subprocess
 from rich.console import Console
 from rich.table import Table
+from util.streams import Stream
+import logging
+
+log_format = '%(asctime)s %(filename)s: %(message)s'
+logging.basicConfig(filename='app.log', level=logging.DEBUG, format=log_format, datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger(__name__)
 
 stream = Stream()
 console = Console()
@@ -22,12 +27,20 @@ def list():
     app_settings.print_settings_json()
 
 @app.command()
-def validate():
+def validate(rke2:bool = typer.Option (False, help="Validate settings in config-rke2.json file", show_default=False),
+            aks:bool  = typer.Option (False, help="Validate settings in config-aks.json file", show_default=False),
+            bigbang: bool = typer.Option (False, help="Validate settings in config-bigbang.json file", show_default=False)):
     '''
-        Validates the settings in the config.json file
+        Validates the config settings
     '''
-    app_settings = AppSettings()
-    app_settings.validate()
+
+    if rke2: AppSettings('./config/config-rke2.json').validate()
+    if aks: AppSettings('./config/config-aks.json').validate()
+    if bigbang: AppSettings('./config/config-bigbang.json').validate_bigbang()
+
+    if not (rke2 or aks or bigbang):
+        cout_error_and_exit ("Please run --help and specify a config file to validate.")
+    
 
 @app.command()
 def azaccount():
@@ -37,7 +50,7 @@ def azaccount():
     try:
         doc = json.loads(subprocess.run([AZ_STATUS], check=False, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8'))
     except Exception as e:
-        io.cout_error("You're not logged in to Azure! Use 'azlogingov' to log in to Azure Government.")
+        cout_error("You're not logged in to Azure! Use 'azlogingov' to log in to Azure Government.")
         exit(1)
     #console.print_json(json.dumps(doc, indent=3))
     table = Table(title="Azure Cloud")
@@ -85,22 +98,40 @@ def azlist():
                 is_not_usgovcloud = True
         table.add_row(cloudName, isActive)
     if (is_not_usgovcloud):
-        io.cout_error("Switching to Azure US Government Cloud")
-        if (stream.do_cloud_login()):
-            io.cout_success("Successfully logged in to Azure US Government")
+        cout_error("Switching to Azure US Government Cloud")
+        if (azlogingov()):
+            cout_success("Successfully logged in to Azure US Government")
 
     console.print(table)
-    io.cout_success("You're logged in to Azure! Please ensure that the correct Cloud is set.")
+    cout_success("You're logged in to Azure! Please ensure that the correct Cloud is set.")
     
 
 @app.command()
 def azlogingov():
-    """
-    Switches to USGovCloud
-    """
-    stream.do_cloud_login() #Set to switch to US Gov Cloud
+    '''
+        Switches to USGovCloud and logs in
+    '''
+    logger.debug("Setting up Azure Cloud")
+    success = False
+    try:
+        res = run_process(['az','cloud', 'set', '--name', 'AzureUSGovernment'])
+        res = run_process(['az','login'])
+        res = run_process(['az','cloud', 'list', '-o', 'table'])
+        success = True
+        cout_success("Successfully logged in to Azure US Government!")
+    except Exception as e:
+        logger.debug(f"Error logging in to Azure Cloud: {e}")
+        cout_error("Error logging in to Azure Cloud")
+    return success
     
-    
+@app.command()
+def kubeversion():
+    """
+    Lists the kubernetes versions for both client and server (if defined)
+    Will exit kubectl version returns non-zero exit status
+    """
+    stream.kube_version()
+
 
 if __name__ == '__main__':
-    typer.run(azlogin)
+    typer.run(azlogingov)

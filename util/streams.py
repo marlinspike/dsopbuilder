@@ -110,7 +110,6 @@ class Stream:
         res = run_process(['ls', '-l', '-a'],True)
         res = run_process(['echo', 'Hello', 'World!'],True)
 
-
     def git_store_credentials(self, user:str, pat:str,):
         
         command = "git config --global credential.helper store".split()
@@ -124,16 +123,23 @@ class Stream:
             cout_error_and_exit (f"{e}")
 
     def git_config_global_user (self, username:str, email:str):
-        run_process(['git','config','--global','user.name', username])
-        run_process(['git','config','--global','user.email', email])
+        logger.debug (f"git - setting global user - {username} / {email}")
+        self._run_process(['git','config','--global','user.name', username])
+        self._run_process(['git','config','--global','user.email', email])
     
+    def git_config_origin (self, repository:str, cwd:str=""):
+        logger.debug (f"git - setting new remote origin - {repository}")
+        self._run_process(f"git remote set-url origin {repository}".split(), cwd=cwd)
+
     def git_checkout_branch (self, branch:str, cwd:str=""):
-        run_process (['git', 'checkout', '-b', branch], cwd=cwd)
+        logger.debug (f"git - switching branch - {branch}")
+        self._run_process (['git', 'checkout', '-b', branch], cwd=cwd)
 
     def git_add_commit_push_file (self, filename:str, message:str, branch:str, cwd:str=""):
-        run_process (['git', 'add', filename],cwd=cwd)
-        run_process (['git', 'commit', '-m', message],cwd=cwd)
-        run_process (['git', 'push', '--set-upstream', 'origin', branch], cwd=cwd)
+        logger.debug (f"git -\n\tpushing file - {filename}\n\t- with message {message}\n\t- to branch {branch}")
+        self._run_process (['git', 'add', filename],cwd=cwd)
+        self._run_process (['git', 'commit', '-m', message],cwd=cwd)
+        self._run_process (['git', 'push', '--set-upstream', 'origin', branch], cwd=cwd)
 
     def kube_version(self):
         command = "kubectl version".split()

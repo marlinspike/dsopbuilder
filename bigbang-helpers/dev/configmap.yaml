@@ -1,0 +1,76 @@
+domain: bigbang.dev
+
+flux:
+  interval: 1m
+  rollback:
+    cleanupOnFail: false
+
+logging:
+  values:
+    elasticsearch:
+      master:
+        count: 1
+        persistence:
+          size: 256Mi
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+      data:
+        count: 1
+        persistence:
+          size: 256Mi
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+    kibana:
+      count: 1
+      resources:
+        requests:
+          cpu: 200m
+          memory: 512Mi
+
+monitoring:
+  enabled: true
+  values:
+    prometheus:
+      prometheusSpec:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+
+fluentbit:
+  values:
+    securityContext:
+      privileged: true
+
+gatekeeper:
+  values:
+    replicas: 1
+    controllerManager:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+    audit:
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+
+kyverno:
+  values:
+    replicaCount: 1
+
+twistlock:
+  # tim - i turned this on for giggles
+  enabled: true
+  values:
+    console:
+      persistence:
+        size: 256Mi
+
+istio:
+  enabled: true

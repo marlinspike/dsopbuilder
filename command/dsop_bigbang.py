@@ -43,32 +43,31 @@ def deploy ():
     print(Panel.fit("PyBuilder - The Pythonic Azure Big Bang Deployment Tool\nReuben Cleetus - reuben@cleet.us\nwith Tim Meyers - timothy.m.meyers@gmail.com (AKS & BB)"))
 
 
-    #------- Validate settings; check Kubernetes ---------------
+    #------- Validate settings; check Kubernetes ------------------------------
 
     validate_settings_and_environment(_app_settings)
 
-    #------- Create ISTIO certs and keys -------
+    # ------- Create Git Repository -------------------------------------------
+
+    configure_git(_app_settings, _bb_stream)   
+
+    #------- Create GPG Encryption Key ----------------------------------------
 
     if bool(_app_settings.settings["bigbang"]["keys"]["create_keys"]) == True:
         create_istio_certs_and_keys(_app_settings, _bb_stream)
 
-    # ------- Configure git -----------------------
+    create_gpg_keys_and_update_sops_yaml(_app_settings, _bb_stream)
 
-    configure_git(_app_settings, _bb_stream)   
+    # ------- Add TLS Certificates --------------------------------------------
+    # ------- Add Pull Credentials (done in same step) ------------------------
 
-    # ------- Update bigbang.yaml -----------------------
+    update_secrets_yaml(_app_settings, _bb_stream)
+
+    # ------- Configure for GitOps (Update bigbang.yaml) ----------------------
 
     update_bigbang_yaml(_app_settings, _bb_stream)      
 
-    # ------- Create GPG keys and get fingerprint ----------------------- 
-    create_gpg_keys_and_update_sops_yaml(_app_settings, _bb_stream)
-
-    # ------- Update and encrypt yaml secrets -----------------------
-
-    update_secrets_yaml(_app_settings, _bb_stream)
-    #update_istio_yaml(_app_settings, _bb_stream)
-
-    # ------- Configure kubernetes cluster - namespaces, secrets
+    # ------- Deploy (Configure kubernetes cluster - namespaces, secrets) -----
 
     prepare_kubernetes (_app_settings, _bb_stream)
     
@@ -117,7 +116,7 @@ def create_gpg_keys_and_update_sops_yaml(_app_settings:AppSettings, _bb_stream:B
 
         tokens = {"FALSE_KEY_HERE": fingerprint}
 
-        template_file = f"{_bb_stream.get_work_dir()}/.sops.yaml.save"
+        template_file = f"{_bb_stream.get_work_dir()}/.sops.yaml.template"
         out_file = f"{_bb_stream.get_work_dir()}/.sops.yaml"
         create_file_from_template (template_file, out_file, tokens) 
 
@@ -141,15 +140,19 @@ def configure_git(_app_settings:AppSettings, _bb_stream:BigBang_Stream):
             _app_settings.settings["credentials"]["github_pat"]
         )
 
-        git_global_user  = 'DSOP Builder'
-        git_global_email ='no-reply@dsopbuilder.com'
+        _bb_stream.git_config_global_user( 
+            username='DSOP Builder', 
+            email='no-reply@dsopbuilder.com')        
 
-        logger.debug (f"setting git credentials - {git_global_user}, {git_global_email}") 
-        _bb_stream.git_config_global_user( git_global_user, git_global_email )        
+        _bb_stream.git_config_origin (
+            _app_settings.settings["bigbang"]["repository"]["url"],
+            _bb_stream.get_project_dir())
 
-        branch = _app_settings.settings["bigbang"]["repository"]["branch"]
-        logger.debug (f"switching to branch - {branch}")
-        _bb_stream.git_checkout_branch (branch, _bb_stream.get_project_dir())
+        _bb_stream.git_checkout_branch (
+            _app_settings.settings["bigbang"]["repository"]["branch"],
+            _bb_stream.get_project_dir())
+
+        cout_success (f"Successfully configured Git for GitOps")
 
 def create_istio_certs_and_keys(_app_settings:AppSettings, _bb_stream:BigBang_Stream):
     
@@ -195,15 +198,17 @@ def prepare_kubernetes (_app_settings:AppSettings, _bb_stream:BigBang_Stream):
         _bb_stream.sleep(2)
 
         namespace = _app_settings.settings['bigbang']['namespace']
-        _bb_stream.exec_kubectl_cmd (f"create namespace {namespace}")
-       # _bb_stream.exec_kubectl_cmd (f"create namespace flux-system")
-
-        #ib_user = _app_settings.settings['credentials']['ironbank_user']
-        #ib_pat  = _app_settings.settings['credentials']['ironbank_pat']
+        ib_user = _app_settings.settings['credentials']['ironbank_user']
+        ib_pat  = _app_settings.settings['credentials']['ironbank_pat']
         gh_user = _app_settings.settings['credentials']['github_user']
         gh_pat = _app_settings.settings['credentials']['github_pat']
+
+        _bb_stream.exec_kubectl_cmd (f"create namespace {namespace}")
         _bb_stream.exec_kubectl_cmd (f"create secret generic sops-gpg -n {namespace} --from-file=bigbangkey.asc")
-        #_bb_stream.exec_kubectl_cmd (f"create secret docker-registry private-registry --docker-server=registry1.dso.mil --docker-username={ib_user} --docker-password={ib_pat} -n flux-system")
+
+        _bb_stream.exec_kubectl_cmd (f"create namespace flux-system")
+        _bb_stream.exec_kubectl_cmd (f"create secret docker-registry private-registry --docker-server=registry1.dso.mil --docker-username={ib_user} --docker-password={ib_pat} -n flux-system")
+        
         _bb_stream.exec_kubectl_cmd (f"create secret generic private-git --from-literal=username={gh_user} --from-literal=password={gh_pat} -n bigbang")
 
 def update_bigbang_yaml(_app_settings:AppSettings, _bb_stream:BigBang_Stream):
@@ -213,13 +218,13 @@ def update_bigbang_yaml(_app_settings:AppSettings, _bb_stream:BigBang_Stream):
         logger.debug(log_line)
 
         tokens = {
-            "__CHANGE_ME_REPO_URL__" : _app_settings.settings["bigbang"]["repository"]["url"],
-            "__CHANGE_ME_REPO_BRANCH__": _app_settings.settings["bigbang"]["repository"]["branch"],
+            "https://replace-with-your-git-repo.git" : _app_settings.settings["bigbang"]["repository"]["url"],
+            "replace-with-your-branch": _app_settings.settings["bigbang"]["repository"]["branch"],
         }
 
         _bb_stream.sleep(2)
 
-        template_file = f"{_bb_stream.get_project_dir()}/bigbang.yaml.save"
+        template_file = f"{_bb_stream.get_project_dir()}/bigbang.yaml.template"
         out_file = f"{_bb_stream.get_project_dir()}/bigbang.yaml"
 
         create_file_from_template (template_file, out_file, tokens)        
@@ -228,6 +233,12 @@ def update_bigbang_yaml(_app_settings:AppSettings, _bb_stream:BigBang_Stream):
         _bb_stream.git_add_commit_push_file (
             "bigbang.yaml", 
             "chore: updating bigbang.yaml",
+            _app_settings.settings["bigbang"]["repository"]["branch"],
+            _bb_stream.get_project_dir())
+
+        _bb_stream.git_add_commit_push_file (
+            "configmap.yaml", 
+            "push initial configmap.yaml",
             _app_settings.settings["bigbang"]["repository"]["branch"],
             _bb_stream.get_project_dir())
 
@@ -250,18 +261,26 @@ def update_secrets_yaml (_app_settings:AppSettings, _bb_stream:BigBang_Stream):
                 "${ISTIO_GW_CRT}": istio_crt
             }
                 
-        secrets_yaml_template = f"{_bb_stream.get_scripts_dir()}/secrets.enc.yaml.template"
-        secrets_yaml_file = f"{_bb_stream.get_work_dir()}/base/secrets.enc.yaml"       
+        #secrets_yaml_template = f"{_bb_stream.get_scripts_dir()}/secrets.enc.yaml.template"
+        #secrets_yaml_file = f"{_bb_stream.get_work_dir()}/base/secrets.enc.yaml"       
+        
+        if bool(_app_settings.settings["bigbang"]["keys"]["create_keys"]) == True:
+            secrets_yaml_template = f"{_bb_stream.get_work_dir()}/base/bigbang-dev-cert.yaml.template" 
+        else: 
+            secrets_yaml_template = f"{_bb_stream.get_work_dir()}/base/bigbang-dev-cert.yaml.default.template" 
+
+        secrets_yaml_template = f"{_bb_stream.get_work_dir()}/base/bigbang-dev-cert.yaml.template"  
+        secrets_yaml_file = f"{_bb_stream.get_work_dir()}/base/secrets.enc.yaml" 
         create_file_from_template (secrets_yaml_template, secrets_yaml_file, secret_tokens)
         create_file_from_template (secrets_yaml_template, f"{secrets_yaml_file}.debug", secret_tokens)
         _bb_stream.sops_encrypt ("secrets.enc.yaml", f"{_bb_stream.get_work_dir()}/base")
         cout_success ("secrets.enc.yaml file created")
 
-        _bb_stream.git_add_commit_push_file (
-                "secrets.enc.yaml", 
-                "chore: updating secrets.enc.yaml",
-                _app_settings.settings["bigbang"]["repository"]["branch"],
-                f"{_bb_stream.get_work_dir()}/base")
+        _bb_stream.git_add_commit_push_file (           
+            "secrets.enc.yaml", 
+            "chore: updating secrets.enc.yaml",
+            _app_settings.settings["bigbang"]["repository"]["branch"],
+            f"{_bb_stream.get_work_dir()}/base")
 
 def update_istio_yaml (_app_settings:AppSettings, _bb_stream:BigBang_Stream):
     log_line = "Updating istio-gw-cert.enc.yaml"

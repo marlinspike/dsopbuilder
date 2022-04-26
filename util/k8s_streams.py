@@ -30,7 +30,7 @@ class K8S_Stream (Stream):
         #cp -R <source_folder>/* <destination_folder>
 
     def _run_terraform_init(self):
-        res = run_process(['terraform', f"-chdir={self.get_project_dir()}" ,'init'])     
+        res = run_process(['terraform', f"-chdir={self.get_project_dir()}" ,'init'])      
 
     def _copy_scripts(self):
         logger.debug(f"Copying script files to example directory")
@@ -61,17 +61,13 @@ class K8S_Stream (Stream):
     def Do_No_VNet_Customization(self ):
         dir = self.get_work_dir()
         self._clone_env_repo(False)
-    
+
     def do_rename_terraform_file(self):
         dir = self.get_work_dir()
         logger.debug(f"Renaming TF_File: '{dir}/example/terraform.tfvars.sample' To '{dir}/example/terraform.tfvars'")
         if os.path.isfile(f"\"{dir}/example/terraform.tfvars\"") == False:
             logger.debug(f"Copying File: {dir}/example/terraform.tfvars.sample -> {dir}/example/terraform.tfvars")
             res = run_process(["cp", f"{dir}/example/terraform.tfvars.sample", f"{dir}/example/terraform.tfvars"]) 
-
-
-
-    
 
 
 if __name__ == '__main__':

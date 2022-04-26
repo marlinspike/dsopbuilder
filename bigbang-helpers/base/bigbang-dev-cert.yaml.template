@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: common-bb
+stringData:
+  # TLS key pair for *.bigbang.dev is used as an example for demo purposes
+  values.yaml: |-
+    registryCredentials:
+      - registry: registry1.dso.mil
+        username: ${IRON_BANK_USER}
+        password: ${IRON_BANK_PAT}
+    istio:
+      gateways:
+        public:
+          tls:
+            key: |-
+              -----BEGIN PRIVATE KEY-----
+              __ISTIO__KEY__
+              -----END PRIVATE KEY-----
+            cert: |-
+              -----BEGIN CERTIFICATE-----
+              __ISTIO__CERT__
+              -----END CERTIFICATE-----

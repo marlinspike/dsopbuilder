@@ -71,13 +71,13 @@ class BigBang_Stream (Stream):
             ['cat', f"{hostname}.key"],
             ['base64', '-w0'],
             self.get_project_dir(),
-        )
+        ).replace('\n','\n             ').strip()
 
         istio_gw_crt = self._run_processes_piped (
             ['cat', f"{hostname}.crt"],
             ['base64', '-w0'],
             self.get_project_dir(),
-        )
+        ).replace('\n','\n             ').strip()
 
         return f"{istio_gw_key}", f"{istio_gw_crt}"
 
@@ -137,7 +137,7 @@ class BigBang_Stream (Stream):
         cout_success(f"{res.stdout}")
 
         if (res.returncode != 0):
-            cout_error_and_exit(f"{res.stderr}")
+            cout_error (f"{res.stderr}")
 
     def install_flux (self, ib_user:str, ib_pat:str, ib_email:str):
         '''
@@ -278,138 +278,6 @@ class BigBang_Stream (Stream):
     def _gpg_quick_add_fingerprint (self, fingerprint:str):
         command = f"gpg --quick-add-key --batch --yes --no-tty --passphrase '.' {fingerprint} rsa4096 encr".split()
         self._run_process(command)
-
-    
-
-    # -----------------------------------------------------------
-
-
-    def do_create_root_certs(self):
-
-        logger.debug("Creating root certs")
-        dir = self.get_project_dir()
-        
-        try: 
-          self._run_process([f"{self.get_scripts_dir()}/create-root-cert.sh"], cwd=dir)
-          cout_success("Successfully created root certs!")
-        except Exception as e:
-          logger.debug(f"Error generating root certs: {e}")
-          cout_error("Error generating root certs")
-
-    def do_create_domain_certs(self, hostname:str):
-        
-        logger.debug("Creating domain certs")
-        dir = self.get_project_dir()
-
-        try:
-          self._run_process([f"{self.get_scripts_dir()}/create-domain-cert.sh", hostname], cwd=dir)
-          cout_success(f"Successfully created domain certs for <{hostname}>")
-        except Exception as e:
-          logger.debug(f"Error generating domain certs: {e}")
-          cout_error("Error generating domain certs")
-
-    def do_upload_domain_certs(self, hostname:str, kv_name:str):
-
-        logger.debug("Uploading domain certs")
-
-        # cat $HOSTNAME.crt | base64 -w0
-
-        #argscat = [ "cat", f"{hostname}.crt"]
-
-        #cat_res = self._run_process(argscat ,shell=True, read_output=True)
-        #cert_res = self._run_process(["base64", "-w0", cat_res],shell=True)
-        
-        #self.cout(cert_res)
-
-        # az keyvault secret set --name istio-gw-crt --vault-name $KV_NAME --encoding base64 --value "$ISTIO_GW_CRT"
-        
-        args = [
-            'az','keyvault','secret','set',
-            '--name', 'istio-gw-crt',
-            '--vault-name', kv_name,
-            '--encoding', 'base64', 
-            '--value', ''
-        ]
-
-    
-    def do_reset_bigbang_yaml(self):
-        logger.debug("Resetting bigbang.yaml file ")
-        dir = self.get_work_dir()
-
-        try:
-            self._run_process([f"{self.get_scripts_dir()}/reset.sh"], cwd=dir)
-        except Exception as e:
-          logger.debug(f"Error resetting bigbang.yaml: {e}")
-
-    def do_update_bigbang_yaml(self, repository:str, branch:str):
-        logger.debug("Updating bigbang.yaml file with repository information")
-        dir = self.get_work_dir()
-
-        try:
-            self._run_process([f"{self.get_scripts_dir()}/update-bigbang-yaml.sh",'dev',repository,branch], cwd=dir)
-            cout_success("Successfully updated bigbang.yaml")
-        except Exception as e:
-          logger.debug(f"Error updating bigbang.yaml: {e}")
-          cout_error("Error updating bigbang.yaml")
-
-    def do_push_bigbang_yaml(self, repository:str, branch:str ):
-        logger.debug("Pushing bigbang.yaml changes")
-        dir = self.get_project_dir()
-
-        try: 
-            self._run_process (['git','config','--global','user.name','DSOP Builder'])
-            self._run_process (['git','config','--global','user.email','no-reply@dsopbuilder.com'])
-            self._run_process (['git', 'checkout', '-b', branch], cwd=dir)
-            self._run_process (['git', 'add', 'bigbang.yaml'],cwd=dir)
-            self._run_process (['git', 'commit', '-m', 'chore: updated bigbang.yaml'],cwd=dir)
-            self._run_process (['git', 'push', '--set-upstream', 'origin', branch],cwd=dir)
-        except Exception as e:
-            logger.debug(f"Error pushing bigbang.yaml: {e}")
-            cout_error(f"Error pushing bigbang.yaml: {e}")
-
-    def do_create_secrets_sh(self, gh_user:str, gh_pat:str, ib_user:str, ib_pat:str, hostname:str):
-        logger.debug("Creating secrets.sh")
-
-        # cat $HOSTNAME.crt | base64 -w0
-        istio_gw_crt = self._run_processes_piped (
-            ['cat', f"{hostname}.crt"],
-            ['base64', '-w0'],
-            self.get_project_dir()
-        )
-
-        istio_gw_key = self._run_processes_piped (
-            ['cat', f"{hostname}.key"],
-            ['base64', '-w0'],
-            self.get_project_dir(),
-        )
-
-        fout = open(f"{self.get_scripts_dir()}/secrets.sh", "wb")
-        subprocess.run(['echo',f"export IRON_BANK_USER=\"{ib_user}\""], stdout=fout)
-        subprocess.run(['echo',f"export IRON_BANK_PAT=\"{ib_pat}\""], stdout=fout)
-        subprocess.run(['echo',f"export AZDO_USER=\"{gh_user}\""], stdout=fout)
-        subprocess.run(['echo',f"export AZDO_PASSWORD=\"{gh_pat}\""], stdout=fout)
-        subprocess.run(['echo',f"export ISTIO_GW_CRT=\"{istio_gw_crt}\""], stdout=fout)
-        subprocess.run(['echo',f"export ISTIO_GW_KEY=\"{istio_gw_key}\""], stdout=fout)
-        fout.close()
-
-    def do_set_deploy_vars(self, kubeconfig_file:str=""):
-        dir = self.get_scripts_dir()
-        fout = open(f"{dir}/deploy-vars.sh", "wb")
-
-        subprocess.run(['grep', '-v', 'USE_KEYVAULT_CERT', 'deploy-vars.sh.sample'], cwd=dir, stdout=fout)
-        subprocess.run(['echo', f"export USE_KEYVAULT_CERT=\"false\""],stdout=fout)
-
-        if kubeconfig_file.strip() != "":
-            subprocess.run(['echo', f"export KUBECONFIG=\"{kubeconfig_file}\""],stdout=fout)
-
-        fout.close()
-
-    def do_bigbang_deploy(self):
-        dir = self.get_scripts_dir()
-        # res = self._run_process(['./deploy.sh'], cwd=dir, shell=True, read_output=True)
-
-        # logger.debug ( f"deploy.sh {res}")
-        # cout_success ( f"{res}" )
 
 if __name__ == '__main__':
     _stream = Stream()

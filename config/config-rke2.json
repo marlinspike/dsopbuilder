@@ -1,12 +1,12 @@
 {
     "general": {
-        "cluster_name": "dsop-rke2",
+        "cluster_name": "dsop-rke2-07c",
         "cloud": "AzureUSGovernmentCloud",
         "location": "usgovvirginia"
     },
     "cluster-size": {
         "server_instance_count": 1,
-        "agent_instance_count": 2,
+        "agent_instance_count": 5,
         "vm_size": "Standard_D8_v3"
     },
     "connectivity": {

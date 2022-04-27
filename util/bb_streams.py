@@ -67,13 +67,13 @@ class BigBang_Stream (Stream):
         Returns a tuple of of the key and cert file for <hostname> in base64 string.
         '''       
 
-        istio_gw_key = self._run_processes_piped (
+        istio_gw_key = run_processes_piped (
             ['cat', f"{hostname}.key"],
             ['base64', '-w0'],
             self.get_project_dir(),
         ).replace('\n','\n             ').strip()
 
-        istio_gw_crt = self._run_processes_piped (
+        istio_gw_crt = run_processes_piped (
             ['cat', f"{hostname}.crt"],
             ['base64', '-w0'],
             self.get_project_dir(),
@@ -160,7 +160,7 @@ class BigBang_Stream (Stream):
     def _generate_private_key (self, new_key_file:str="ca.key", key_len:str="2048", cwd:str=""):
         command = ["openssl", "genrsa", "-out", new_key_file, key_len]
         try:
-            res = self._run_process(command, read_output=True, cwd=cwd)
+            res = run_process(command, read_output=True, cwd=cwd)
             cout_success (res)
             cout_success (f"Success! _generate_private_key")
         except Exception as e:
@@ -179,7 +179,7 @@ class BigBang_Stream (Stream):
 
         try:
             #subprocess.run(command, cwd=cwd)
-            self._run_process(command, cwd=cwd)
+            run_process(command, cwd=cwd)
             cout_success (f"Success! _generate_root_certificate")
 
         except Exception as e:
@@ -197,7 +197,7 @@ class BigBang_Stream (Stream):
         command = command_front + [command_mid] + command_back
 
         try:
-            self._run_process(command, cwd=cwd)
+            run_process(command, cwd=cwd)
             cout_success (f"Success! _generate_domain_signing_request") 
 
         except Exception as e:
@@ -232,7 +232,7 @@ class BigBang_Stream (Stream):
         command = command_str.split()
 
         try:
-            self._run_process(command, cwd=cwd)
+            run_process(command, cwd=cwd)
             cout_success (f"Success! _generate_domain_signed_certificate")
         except Exception as e:
             logger.debug(f"Error _generate_domain_signed_certificate: {e}")
@@ -242,7 +242,7 @@ class BigBang_Stream (Stream):
         command = f"rm -rf {self.get_project_dir()}/{domain}.csr {self.base_dir}/{domain}.ext".split()
 
         try:
-            self._run_process(command, shell=True)
+            run_process(command, shell=True)
             cout_success (f"Success! _domain_cert_file_cleanup")  
         except Exception as e:
             logger.debug(f"Error _domain_cert_file_cleanup: {e}")
@@ -260,24 +260,24 @@ class BigBang_Stream (Stream):
     def _generate_gpg_key (self, gpg_key_name:str):
         gen_cmd = f"gpg --quick-generate --batch --passphrase '.' {gpg_key_name}".split()
         print (gen_cmd)
-        self._run_process(gen_cmd)
+        run_process(gen_cmd)
 
     def _generate_gpg_key_complete (self, gpg_key_name:str):
         gen_cmd = f"./gpg-key-gen.sh {gpg_key_name}".split()
-        self._run_process(gen_cmd, cwd=self.get_scripts_dir())
+        run_process(gen_cmd, cwd=self.get_scripts_dir())
 
 
     def _get_gpg_fingerprint (self, gpg_key_name:str):
         gpg_get_key_cmd = f"gpg -K {gpg_key_name}".split()
         sed_cmd = f"sed -e 's/ *//;2q;d;'"
 
-        fingerprint = self._run_processes_piped (gpg_get_key_cmd, sed_cmd, encoding='UTF-8')
+        fingerprint = run_processes_piped (gpg_get_key_cmd, sed_cmd, encoding='UTF-8')
         #print (f"{fingerprint}")
         return fingerprint.strip()
 
     def _gpg_quick_add_fingerprint (self, fingerprint:str):
         command = f"gpg --quick-add-key --batch --yes --no-tty --passphrase '.' {fingerprint} rsa4096 encr".split()
-        self._run_process(command)
+        run_process(command)
 
 if __name__ == '__main__':
     _stream = Stream()

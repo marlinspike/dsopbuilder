@@ -27,7 +27,7 @@ console = Console()
 
 _app_settings = None
 _working_dir = "working"
-_clone_dsop_aks_dir = "dsop-aks"
+_clone_dsop_aks_dir = "dsop_aks"
 _stream = None
 
 @app.command()

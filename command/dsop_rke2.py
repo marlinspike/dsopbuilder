@@ -29,7 +29,7 @@ console = Console()
 
 _app_settings = None
 _working_dir = "working"
-_clone_dsop_rke2_dir = "dsop-rke2"
+_clone_dsop_rke2_dir = "dsop_rke2"
 stream = None
 
 @app.command()
@@ -60,6 +60,7 @@ def apply(
             splice_file_token(_terraform_file,"cluster_name", _app_settings.settings["general"]["cluster_name"])
             splice_file_token(_terraform_file, "cloud", _app_settings.settings["general"]["cloud"])
             splice_file_token(_terraform_file, "location", _app_settings.settings["general"]["location"])
+            splice_file_token(_terraform_file, "agent_instance_count", _app_settings.settings["cluster-size"]["agent_instance_count"])
             splice_file_token(_terraform_file, "server_public_ip", _app_settings.settings["connectivity"]["server_public_ip"])
             splice_file_token(_terraform_file, "server_open_ssh_public", _app_settings.settings["connectivity"]["server_open_ssh_public"])
             cout_success("Completed Terraform Token splicing!")

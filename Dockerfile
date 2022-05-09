@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=America/New_York \
     DEBIAN_FRONTEND=noninteractive
@@ -28,7 +28,6 @@ RUN apt-get update && apt-get install -y \
     gpg \
     libssl-dev \
     libffi-dev \
-    python-dev \
     apt-transport-https \
     lsb-release \
     software-properties-common \
@@ -36,7 +35,6 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gnupg \
     git \
-    azure-cli \
     curl \
     python3-pip \
     nano \
@@ -60,6 +58,9 @@ RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kus
   && chmod +x /usr/bin/kustomize
 #RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
 #    && chmod +x /usr/bin/kustomize
+
+# Azure CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb |  bash
 
 #Flux
 RUN curl -s https://fluxcd.io/install.sh | bash

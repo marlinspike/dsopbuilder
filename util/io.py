@@ -129,6 +129,7 @@ def cout_error(text: str):
     #rprint(f"[italic red]{text}[/italic red]")
     
 def cout_error_and_exit(text: str, exit_code:int=-1):
+    print("-->", text)
     cout_error(f"\n{text}")
     exit(exit_code)
 

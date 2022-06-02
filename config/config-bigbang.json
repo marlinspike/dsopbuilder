@@ -1,17 +1,17 @@
 {
     "credentials": {
-        "github_user" : "__GH_USER__",
-        "github_pat" : "__GH_PAT__",
-        "ironbank_user" : "__IB_USER__",
-        "ironbank_pat" : "__IB_PAT__"
+        "github_user" : "marlinspike",
+        "github_pat" : "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",
+        "ironbank_user" : "rcleetus",
+        "ironbank_pat" : "FpNncaeCATywvNWRjlb4s2aAuHQsdU9U"
     },
     "bigbang" : {
         "hostname" : "bigbang.dev",
         "azure_deploy_name": "bigbang",
         "namespace": "bigbang",
         "repository" : {
-            "url" : "__GH_REPO__",
-            "branch": "__GH_BRANCH__"
+            "url" : "https://repo1.dso.mil/platform-one/big-bang/bigbang",
+            "branch": "master"
         },
         "keys": {
             "gpg_key_name" : "bigbang-sops",

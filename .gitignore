@@ -3,6 +3,7 @@ dbuild.sh
 venv
 .vscode
 working
+bigbangkey.asc
 .DS_Store
 _test.py
 _test.log

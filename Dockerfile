@@ -1,4 +1,4 @@
-FROM ubuntu:21.10
+FROM ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=America/New_York \
     DEBIAN_FRONTEND=noninteractive
@@ -28,7 +28,6 @@ RUN apt-get update && apt-get install -y \
     gpg \
     libssl-dev \
     libffi-dev \
-    python-dev \
     apt-transport-https \
     lsb-release \
     software-properties-common \
@@ -36,7 +35,6 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gnupg \
     git \
-    #azure-cli \
     curl \
     python3-pip \
     nano \

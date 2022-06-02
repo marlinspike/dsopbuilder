@@ -159,10 +159,10 @@ class BigBang_Stream (Stream):
 
     def _generate_private_key (self, new_key_file:str="ca.key", key_len:str="2048", cwd:str=""):
         command = ["openssl", "genrsa", "-out", new_key_file, key_len]
-        try:
-            res = run_process(command, read_output=True, cwd=cwd)
-            cout_success (res)
-            cout_success (f"Success! _generate_private_key")
+        try:           
+            subprocess.run (command, cwd=cwd, check=True)
+
+            cout_success (f"Success! Generated private key - {new_key_file}")
         except Exception as e:
             logger.debug(f"Error generating private key: {e}")
             cout_error_and_exit(f"Error generating private key: {e}")    
@@ -178,9 +178,9 @@ class BigBang_Stream (Stream):
         command = command_front + [command_mid] + command_back
 
         try:
-            #subprocess.run(command, cwd=cwd)
-            run_process(command, cwd=cwd)
-            cout_success (f"Success! _generate_root_certificate")
+            subprocess.run (command, cwd=cwd, check=True)
+
+            cout_success (f"Success! Generated Root Certificate - {key_file}")
 
         except Exception as e:
             logger.debug(f"Error _generate_root_certificate: {e}")

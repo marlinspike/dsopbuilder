@@ -62,6 +62,9 @@ RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kus
 #RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
 #    && chmod +x /usr/bin/kustomize
 
+# Azure CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb |  bash
+
 #Flux
 RUN curl -s https://fluxcd.io/install.sh | bash
 

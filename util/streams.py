@@ -60,6 +60,7 @@ class Stream:
         res = run_process(['ls', '-l', '-a'],True)
         res = run_process(['echo', 'Hello', 'World!'],True)
 
+    ''' Remove later
     def git_store_credentials(self, user:str, pat:str,):
         
         command = "git config --global credential.helper store".split()
@@ -71,6 +72,7 @@ class Stream:
             fout.close()
         except Exception as e:
             cout_error_and_exit (f"{e}")
+    '''
 
     def git_config_global_user (self, username:str, email:str):
         logger.debug (f"git - setting global user - {username} / {email}")

@@ -74,22 +74,44 @@ class Stream:
 
     def git_config_global_user (self, username:str, email:str):
         logger.debug (f"git - setting global user - {username} / {email}")
-        run_process(['git','config','--global','user.name', username])
-        run_process(['git','config','--global','user.email', email])
+
+        try:
+            run_process(['git','config','--global','user.name', username])
+            run_process(['git','config','--global','user.email', email])
+            cout_success (f"git - configured git global user - {username} / {email}")
+        except Exception as e:
+            cout_error_and_exit (f"{e}")
     
     def git_config_origin (self, repository:str, cwd:str=""):
         logger.debug (f"git - setting new remote origin - {repository}")
-        run_process(f"git remote set-url origin {repository}".split(), cwd=cwd)
+
+        try:
+            subprocess.run (f"git remote set-url origin {repository}".split(), check=True, encoding='UTF-8', cwd=cwd)
+            cout_success ("git - configured remote origin")
+        except Exception as e:
+            print (f"{e}")
+            cout_error_and_exit (f"{e}")
 
     def git_checkout_branch (self, branch:str, cwd:str=""):
         logger.debug (f"git - switching branch - {branch}")
-        run_process (['git', 'checkout', '-b', branch], cwd=cwd)
+
+        try:
+            run_process (['git', 'checkout', '-b', branch], cwd=cwd)
+            cout_success ("git - switched branch")
+        except Exception as e:
+            cout_error_and_exit (f"{e}")
 
     def git_add_commit_push_file (self, filename:str, message:str, branch:str, cwd:str=""):
         logger.debug (f"git -\n\tpushing file - {filename}\n\t- with message {message}\n\t- to branch {branch}")
-        run_process (['git', 'add', filename],cwd=cwd)
-        run_process (['git', 'commit', '-m', message],cwd=cwd)
-        run_process (['git', 'push', '--set-upstream', 'origin', branch], cwd=cwd)
+
+        try:
+            run_process (['git', 'add', filename],cwd=cwd)
+            run_process (['git', 'commit', '-m', message],cwd=cwd)
+            subprocess.run(['git', 'push', '--set-upstream', 'origin', branch],check=True,encoding='UTF-8', cwd=cwd)
+            cout_success (f"git - added, committed and pushed file - {filename}")
+        except Exception as e:
+            
+            cout_error_and_exit (f"{e}")
 
 
     def kube_version(self):

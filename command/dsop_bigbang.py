@@ -45,7 +45,8 @@ def deploy ():
 
     #------- Validate settings; check Kubernetes ------------------------------
 
-    validate_settings_and_environment(_app_settings)
+    validate_settings(_app_settings)
+    validate_environment()
 
     # ------- Create Git Repository -------------------------------------------
 
@@ -135,17 +136,19 @@ def configure_git(_app_settings:AppSettings, _bb_stream:BigBang_Stream):
 
         _bb_stream.sleep(2)
 
-        _bb_stream.git_store_credentials(
-            _app_settings.settings["credentials"]["github_user"], 
-            _app_settings.settings["credentials"]["github_pat"]
+        _bb_stream.git_config_global_user( username='DSOP Builder', email='no-reply@dsopbuilder.com')        
+
+        '''
+        Add credentials locally to the repository URL when setting origin
+        '''
+
+        _repository_url_with_creds = _app_settings.settings["bigbang"]["repository"]["url"].replace (
+            "https://",
+            "https://" + _app_settings.settings["credentials"]["github_user"] + ":" + _app_settings.settings["credentials"]["github_pat"] + "@"
         )
 
-        _bb_stream.git_config_global_user( 
-            username='DSOP Builder', 
-            email='no-reply@dsopbuilder.com')        
-
         _bb_stream.git_config_origin (
-            _app_settings.settings["bigbang"]["repository"]["url"],
+            _repository_url_with_creds,
             _bb_stream.get_project_dir())
 
         _bb_stream.git_checkout_branch (
@@ -307,16 +310,23 @@ def update_istio_yaml (_app_settings:AppSettings, _bb_stream:BigBang_Stream):
             _app_settings.settings["bigbang"]["repository"]["branch"],
             f"{_bb_stream.get_work_dir()}/base")
 
-def validate_settings_and_environment(_app_settings:AppSettings):
+def validate_settings(_app_settings:AppSettings):
 
-    log_line = "Validating settings and verifying environment"
+    log_line = "Validating Big Bang app settings"
 
     with console.status (f"{log_line}:\n"):
         logger.debug(log_line)
 
         #Ensure that app-settings are valid
         if(_app_settings.validate_bigbang() == False):
-            exit(1)
+            cout_error_and_exit ("Big Bang app settings are invalid")
+
+def validate_environment():
+
+    log_line = "Verifying Kubernetes cluster exists"
+
+    with console.status (f"{log_line}:\n"):
+        logger.debug(log_line)
 
         logger.debug("Verifying Kubernetes Cluster")
         settings.kubeversion()

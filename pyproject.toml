@@ -1,6 +1,6 @@
 [project]
 name = "dsopbuilder"
-version = "0.1.0.dev0"
+version = "1.0.0b0"
 description = "PyBuilder and Dockerfile for image that builds the shuffereu/dsopbuilder Docker Image."
 readme = "README.md"
 requires-python = ">=3.6.2"

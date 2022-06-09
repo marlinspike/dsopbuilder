@@ -4,7 +4,7 @@ ENV TZ=America/New_York \
     DEBIAN_FRONTEND=noninteractive
 
 LABEL "author"="Reuben Cleetus"
-LABEL "version"="1.0"
+LABEL "version"="1.0.0b0"
 LABEL "email"="reuben@cleet.us"
 
 ENV BB_TEMPLATE_VERSION="1.9.0"

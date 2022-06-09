@@ -287,7 +287,7 @@ This command automates the deployment of BigBang, as documented in [Repo1](a) to
 1. **Deploys Flux to the Kubernetes Cluster**, if configured to do so.
 1. **Deploys BigBang to the Kubernetes Cluster**.
 
-This process usually completes in less than *2-3 minutes*.
+This process usually completes in less than *2 minutes*.
 
 #### Verifying the installation ####
 
@@ -297,8 +297,32 @@ After this completes, you can run the following command to watch Flux deploy Big
 
 It will print out a screen similar to the following
 
-```
-output goes here
+```text
+NAMESPACE   NAME                                                          URL                                                                              READY     STATUS           
+AGE
+bigbang     gitrepository.source.toolkit.fluxcd.io/bigbang                https://repo1.dso.mil/platform-one/big-bang/bigbang.git                          True      Fetched revision:
+1.29.0/9da211a129a13617cbd0f3b710d85333488f6561               31s
+bigbang     gitrepository.source.toolkit.fluxcd.io/cluster-auditor        https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git        True      Fetched revision:
+1.4.0-bb.0/a3c9fc97f6b25b02e4e7f32d5508469a1c0c0b92           14s
+
+....
+
+NAMESPACE   NAME                                                 READY     STATUS                                                  AGE
+bigbang     helmrelease.helm.toolkit.fluxcd.io/bigbang           True      Release reconciliation succeeded                        31s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/cluster-auditor   False     dependency 'bigbang/gatekeeper' is not ready            14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/eck-operator      False     HelmChart 'bigbang/bigbang-eck-operator' is not ready   14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/ek                False     dependency 'bigbang/eck-operator' is not ready          14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/fluent-bit        False     dependency 'bigbang/ek' is not ready                    14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/gatekeeper        Unknown   Reconciliation in progress                              14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/istio             False     dependency 'bigbang/istio-operator' is not ready        14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/istio-operator    False     dependency 'bigbang/gatekeeper' is not ready            14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/jaeger            False     dependency 'bigbang/istio' is not ready                 14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/kiali             False     dependency 'bigbang/istio' is not ready                 14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/monitoring        False     HelmChart 'bigbang/bigbang-monitoring' is not ready     14s
+bigbang     helmrelease.helm.toolkit.fluxcd.io/twistlock         False     dependency 'bigbang/gatekeeper' is not ready            14s
+
 ```
 
 Flux refers to this as *reconciliation* because it is watching your Git repository for configuration changes, and the reconciles any changes into your cluster.
+
+Once all of the statuses in the READY column turn to TRUE, Big Bang is ready to start being used.

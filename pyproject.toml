@@ -1,0 +1,35 @@
+[project]
+name = "dsopbuilder"
+version = "0.1.0.dev0"
+description = "PyBuilder and Dockerfile for image that builds the shuffereu/dsopbuilder Docker Image."
+readme = "README.md"
+requires-python = ">=3.6.2"
+license = {file = "LICENSE"}
+keywords = ["p1", "platform1", "azure", "dsop", "kubernetes", "devsecops", "pybuilder"]
+authors = [
+  {name = "Reuben Cleetus"}
+]
+maintainers = [
+  {name = "Reuben Cleetus"}
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+dependencies = [
+  "rich",
+  "click==8.0.4",
+  "azure-keyvault==1.1.0",
+  "typer",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=6.2.5,<7",
+  "pytest-cov[all]"
+]
+
+[project.urls]
+documentation = "https://github.com/marlinspike/dsopbuilder/blob/main/README.md"
+repository = "https://github.com/marlinspike/dsopbuilder"

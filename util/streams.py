@@ -84,6 +84,7 @@ class Stream:
         except Exception as e:
             cout_error_and_exit (f"{e}")
     
+    
     def git_config_origin (self, repository:str, cwd:str=""):
         logger.debug (f"git - setting new remote origin - {repository}")
 

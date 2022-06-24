@@ -19,7 +19,7 @@ ENV KUBECTL_VER="v1.23.1"
 ENV GPG_TTY="/dev/pts/0"
 
 #apt-get
-RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
 
 RUN apt-get update && apt-get install -y \
     python3.10 \
@@ -41,6 +41,9 @@ RUN apt-get update && apt-get install -y \
     vim \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
+
+# Azure CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 #Terraform
 RUN wget https://releases.hashicorp.com/terraform/1.1.7/terraform_1.1.7_linux_arm64.zip

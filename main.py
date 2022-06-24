@@ -32,8 +32,8 @@ console = Console()
 
 _app_settings = None
 _working_dir = "working"
-_clone_dsop_rke2_dir = "dsop-rke2"
-_clone_dsop_aks_dir = "dsop-aks"
+_clone_dsop_rke2_dir = "dsop_rke2"
+_clone_dsop_aks_dir = "dsop_aks"
 _stream = None
 _terraform_file = f"{str(pathlib.Path().resolve())}/{_working_dir}/{_clone_dsop_rke2_dir}/example/terraform.tfvars"
 

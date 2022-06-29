@@ -4,7 +4,7 @@ ENV TZ=America/New_York \
     DEBIAN_FRONTEND=noninteractive
 
 LABEL "author"="Reuben Cleetus"
-LABEL "version"="1.0"
+LABEL "version"="1.0.0b0"
 LABEL "email"="reuben@cleet.us"
 
 ENV BB_TEMPLATE_VERSION="1.9.0"
@@ -18,7 +18,8 @@ ENV KUBECTL_VER="v1.23.1"
 # https://jhooq.com/failed-to-get-the-data-key/
 ENV GPG_TTY="/dev/pts/0"
 
-#apt-get
+
+# apt-get
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
 
 RUN apt-get update && apt-get install -y \
@@ -42,51 +43,52 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
+
 # Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
-#Terraform
+# Terraform
 RUN wget https://releases.hashicorp.com/terraform/1.1.7/terraform_1.1.7_linux_arm64.zip
 RUN unzip terraform*.zip
 RUN mv terraform /usr/local/bin
 
-#Kubectl
+# Kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VER}/bin/linux/amd64/kubectl
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin
 
-#Kustomize
+# Kustomize
 RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VER}/kustomize_v${KUSTOMIZE_VER}_linux_amd64.tar.gz" | \
   tar -xz -C "/usr/bin" kustomize \
   && chmod +x /usr/bin/kustomize
-#RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
+## RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
 #    && chmod +x /usr/bin/kustomize
 
 # Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb |  bash
 
-#Flux
+# Flux
 RUN curl -s https://fluxcd.io/install.sh | bash
 
-#SOPS
+# SOPS
 ADD https://github.com/mozilla/sops/releases/download/v${SOPS_VER}/sops-v${SOPS_VER}.linux /usr/local/bin/sops
 RUN chmod +x /usr/local/bin/sops
 
-#AZCopy
+# AZCopy
 RUN set -ex \
     && curl -L -o azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux \
     && tar -xf azcopy.tar.gz --strip-components=1 \
     && mv ./azcopy /usr/local/bin
 
-#Fixing KeyVault bug in AZ CLI (issue/13507)
-RUN pip3 uninstall azure-keyvault && \
+# Fixing KeyVault bug in AZ CLI (issue/13507)
+RUN pip3 uninstall azure-keyvault; \
     pip3 install azure-keyvault==1.1.0
 
-#PyBuilder
+# PyBuilder
 COPY . /PyBuilder
 WORKDIR /PyBuilder
 RUN ls -l
-RUN pip install -r requirements.txt
+RUN pip install '.[dependencies]'
 
 # Prepare RKE2 working
 RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2

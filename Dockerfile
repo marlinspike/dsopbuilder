@@ -46,9 +46,6 @@ RUN apt-get update && apt-get install -y \
 
 # Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sed 's/install -y azure-cli/install -y azure-cli=2.36.0-1~jammy/' |bash
-#RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sed 's/apt-get install -y azure-cli/apt-cache madison azure-cli/' | bash
-#RUN apt-get install -y azure-cli=2.36.0-1~focal
-#RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Terraform
 RUN wget https://releases.hashicorp.com/terraform/1.1.7/terraform_1.1.7_linux_arm64.zip
@@ -66,9 +63,6 @@ RUN curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kus
   && chmod +x /usr/bin/kustomize
 ## RUN curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VER}/kustomize_${KUSTOMIZE_VER}_linux_amd64  -o /usr/bin/kustomize \
 #    && chmod +x /usr/bin/kustomize
-
-# Azure CLI
-#RUN curl -sL https://aka.ms/InstallAzureCLIDeb |  bash
 
 # Flux
 RUN curl -s https://fluxcd.io/install.sh | bash

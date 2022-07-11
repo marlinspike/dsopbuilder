@@ -85,7 +85,9 @@ RUN pip3 uninstall azure-keyvault; \
 COPY . /PyBuilder
 WORKDIR /PyBuilder
 RUN ls -l
-RUN pip install '.[dependencies]'
+RUN pip install pipreqs \
+    && pipreqs . \
+    && pip install -r requirements.txt
 
 # Prepare RKE2 working
 RUN git clone https://github.com/p1-dsop/dsop-rke2 working/dsop_rke2
